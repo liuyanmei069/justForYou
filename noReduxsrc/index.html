@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>justForYou</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.css">
+    <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/css/swiper.min.css">
+</head>
+<body>
+
+<div id="app"></div>
+<script type='text/javascript' src='//g.alicdn.com/sj/lib/zepto/zepto.js' charset='utf-8'></script>
+<script>$.config={router:false}</script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.js' charset='utf-8'></script>
+<script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/js/swiper.min.js"></script>
+
+
+<!-- <script>
+//    $.config = {
+//        autoInit: true,
+//        swipePanelOnlyClose:false,
+//    }
+$.config = {
+  // 路由功能开关过滤器，返回 false 表示当前点击链接不使用路由
+  routerFilter: function($link) {
+      // 某个区域的 a 链接不想使用路由功能
+      if ($link.is('/home')) {
+          return false;
+      }
+
+      return true;
+  }
+};
+
+</script> -->
+<script>$(document).on("pageinte",function(){
+});
+  </script>
+
+<script type="text/javascript">
+  window.onload = function() {
+  
+// var mySwiper;
+// $(document).ready(function () {
+  //initialize swiper when document ready
+    
+var mySwiper = new Swiper ('.swiper-container', {
+  direction: 'horizontal',
+  loop: false,
+  
+  // 如果需要分页器
+  pagination: '.swiper-pagination',
+  dataOffset: '44',
+  
+  // 如果需要前进后退按钮
+  // nextButton: '.swiper-button-next',
+  // prevButton: '.swiper-button-prev',
+  
+  // 如果需要滚动条
+  // scrollbar: '.swiper-scrollbar',
+  // dataSpaceBetween: '10',
+  slidesPerView : 3,
+  spaceBetween : 5,
+}) 
+} 
+// })      
+</script>
+
+<!-- <script type="text/javascript" charset="utf-8">
+mui.init({
+  dataOffSet:'44',
+})
+    
+
+   
+</script> -->
+
+</body>
+
+</html>
