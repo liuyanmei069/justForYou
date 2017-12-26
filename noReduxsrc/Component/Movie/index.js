@@ -1,11 +1,16 @@
-import React from "react";
+
 import {Link, HashRouter, BrowserRouter, withRouter, Route, NavLink, Switch} from 'react-router-dom';
 import { UserModel,MovieModel } from "../dataModel";
 import "../../static/css/style.css";
 import Me from "../Me";
 
-
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import querystring from 'querystring';
+import ReactSwipe from 'react-swipe';
+// import  './index.css';
 import { dateDiff } from "../../Tools";
+
 let Styles = {
   index:{
   paddingRight: "0.75rem",
@@ -22,6 +27,7 @@ titleName:{
   margin: "0.2rem 0",
   color: "#999999",
   fontSize: "16px",
+  float:"left",
 
 },
 indexList: {
@@ -73,6 +79,30 @@ class Style extends React.Component{
         // this.state={
         //   currentIndex:false,
         // };
+        this.state = {isToggleOn: true};
+
+    // 这个绑定是必要的，使`this`在回调中起作用
+    this.next = this.next.bind(this);
+    this.prev = this.prev.bind(this);
+    var query = querystring.parse(window.location.search.slice(2));
+    var numberOfSlides = parseInt(query.slidesNum);
+    this.paneNodes=[];
+    var startSlide = parseInt(query.startSlide) || 0;
+    this.swipeOptions = {
+      startSlide: startSlide < this.paneNodes.length && startSlide >= 0 ? startSlide : 0,
+      auto: parseInt(query.auto) || 0,
+      speed: parseInt(query.speed, 10) || 300,
+      disableScroll: query.disableScroll === 'false',
+      continuous: query.continuous === 'true',
+      callback(index,element) {
+        // for(element.length<=3;element.length<=9;index++){}
+        console.log('slide changed',element);
+      },
+      transitionEnd() {
+        console.log('ended transition');
+      }
+    };
+  
         this.handleStyle=this.handleStyle.bind(this);
   }
   
@@ -106,6 +136,20 @@ class Style extends React.Component{
       console.log(clickStyle)
  }
 
+ 
+  
+  
+
+ next() {
+  
+    this.reactSwipe.next();
+  }
+
+  prev() {
+   
+    this.reactSwipe.prev();
+  }
+
   render() {
     const style = this.props.style;
     console.log(style);
@@ -125,9 +169,19 @@ class Style extends React.Component{
       
       <li type="checkbox">
       <span className="" style={Styles.titleName}>类型：</span>
+      <div style={{float:"left",fontSize:"0.1rem",marginRight:"",marginTop:"0.3rem", color: "#999999"}} ><a className="" onClick={this.prev}>&lt;
+          </a></div>
+          <div style={{float:"right",fontSize:"0.1rem",marginRight:"",marginTop:"0.3rem",color: "#999999"}} >
+          <a className="" onClick={this.next}>&gt;</a>
+          </div> 
+          
+           {/* <swipeLeft onClick={this.prev}></swipeLeft>
+           <swipeRight onClick={this.next}></swipeRight> */}
+      <ReactSwipe  ref={reactSwipe => this.reactSwipe = reactSwipe} className="mySwipe" swipeOptions={this.swipeOptions}>
+      <div >
       <a onClick={
         this.handleStyle.bind(this,'','')
-      } className="tab-link active" type="radio" name="tag" value="爱情" style={clickStyle1} >全部</a>
+      } className="tab-link active" type="radio" name="tag" value="" style={clickStyle1} >全部</a>
       <a  onClick={(e) => {
                 this.handleStyle(e,'爱情')
               }}className="tab-link" type="radio" name="tag" value="'爱情" style={clickStyle2}>爱情</a>
@@ -140,6 +194,9 @@ class Style extends React.Component{
       <a onClick={(e) => {
                 this.handleStyle(e,'剧情')
               }} type="radio" className="tab-link" name="tag" value="剧情" style={clickStyle5}>剧情</a>
+
+      </div>
+      <div >        
       <a onClick={(e) => {
                 this.handleStyle(e,"科幻")
               }} type="radio" className="tab-link" name="tag" value="科幻" style={clickStyle6}>科幻</a>
@@ -155,8 +212,11 @@ class Style extends React.Component{
       <a onClick={(e) => {
                 this.handleStyle(e,"犯罪")
               }} type="radio" className="tab-link" name="tag" value="/犯罪/" style={clickStyle10}>犯罪</a>
-
+              </div>
+              </ReactSwipe>
+           
       </li>
+      
     );
   }
 }
@@ -872,7 +932,30 @@ class Movie extends React.Component {
   //   })
   //   console.log(key)
   // }
-
+  goLogin() {
+    $.closePanel();
+    setTimeout(() => {
+      window.location.hash = "login";
+    }, 1000);
+  }
+  checkLogin() {
+    if (UserModel.fetchToken()) {
+      return <Me />;
+    } else {
+      return (
+        <div>
+          <p>
+            <a
+              onClick={this.goLogin}
+              className="button button-big button-fill button-success"
+            >
+              登录{" "}
+            </a>
+          </p>
+        </div>
+      );
+    }
+  }
 
   indexList() {
         let _this = this;
@@ -1035,6 +1118,7 @@ class Movie extends React.Component {
           className="panel panel-left panel-reveal theme-dark"
           id="panel-left-demo"
         >
+        {this.checkLogin()}
         </div>
       </div>
    

@@ -44,6 +44,7 @@ mongoose.model('Movie',new mongoose.Schema({
     imglink:{type:Array,default:[]},
     imdb:{type:Array,default:[]},
     score:{type:Array,default:[]},
+    user:{type:ObjectId,ref:'User'},
     description:{type:Array,default:[]},
     comments:[{//评论的一个数组
         user:{type:ObjectId,ref:'User'},//评论人
@@ -61,7 +62,7 @@ mongoose.model('Movie',new mongoose.Schema({
         star:{type:Array,default:[]},
         dcomments:[{//评论的一个数组
             user:{type:ObjectId,ref:'User'},//评论人
-            content:{type:String},//评论的内容
+            ddcontent:{type:String},//评论的内容
             createAt:{type:String,isRequired:true}//评论的时间
         }],
     }],

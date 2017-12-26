@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { UserModel, ArticleModel,MovieModel } from "../dataModel";
-import "../../static/css/style.css";
-import Me from "../Me";
+import { UserModel, ArticleModel,MovieModel } from "../../dataModel";
+import "../../../static/css/style.css";
+import Me from "../../Me";
 // import Swiper from "react-swiper";
 import ReactSwipe from 'react-swipe';
 
@@ -12,7 +12,7 @@ import {SwiperContainer,SwiperSlide} from "react-swiper";
 
 
 
-import { dateDiff } from "../../Tools";
+import { dateDiff } from "../../../Tools";
 let Styles = {
   indexList: {
     paddingRight: "0.75rem",
@@ -22,11 +22,9 @@ let Styles = {
     // background: "#fff",
     paddingLeft: "0.75rem",
     paddingBottom: "0.3rem",
-    display: "inline-block",
     // display:"vertical-align:top",
     verticalAlign:"top",
-   marginTop: "30px"
-    
+
   },
   h4Style: {
     margin: "0.3rem 0",
@@ -47,48 +45,15 @@ let Styles = {
 let header = () => {
   return (
     <header className="bar bar-nav" style={{backgroundColor:"#0099FF",color:"#FFFFFF"}}>
-      <a
-      className="tab-item open-panel pull-left"
-      data-panel="#panel-left-demo"
-      >
-        <span className="icon icon-me" />
-    </a>
-      <h1 className="title" style={{color:"#FFFFFF"}}>首页</h1>
+     <Link to={"/Home"} style={{color:"#FFFFFF"}}>
+     <span className="icon icon-left"></span>
+    </Link>
+      <span style={{marginLeft:"2rem",color:"#FFFFFF"}}>院线电影</span>
     </header>
     )
   }
-class SearchBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleFilterTextInputChange = this.handleFilterTextInputChange.bind(this);
-  }
-  
-  handleFilterTextInputChange(e) {
-    //this.props.onFilterTextInput(e.target.value);
-    this.props.onFilterTextInput(e.target.value);
-    console.log(e.target.value);
-  } 
-  render() {
-    return (
-      <div>
-    <div className="bar bar-header-secondary" style={{marginTop:'50px'}}>
-      <div className="searchbar">
-        <a className="searchbar-cancel">取消</a>
-        <div className="search-input">
-        <Link to={'searchMovie'} >
-          <label className="icon icon-search" htmlFor="search"></label>
-          <input className="open-about" value={this.props.filterText} onChange={this.handleFilterTextInputChange} type="search" id='search' placeholder='输入关键字...'/>
-          </Link>
-        </div>
-      </div>
-    </div>
-    </div>
-    );
-  }
-}
-// export default SearchBar;
 
-class GongiMovie extends React.Component {
+class Going extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -98,9 +63,11 @@ class GongiMovie extends React.Component {
   }
   componentDidMount() {
     console.log("0-0-");
+
       this.goingData();
     console.log("0909");
   }
+ 
   goingData() {
     console.log("goingData");
     MovieModel.goingmovie(
@@ -124,84 +91,99 @@ class GongiMovie extends React.Component {
   goingMovie() {
     let _this = this;
     let list = this.state.list;
-    console.log(list.length)
-    return list.map(function(item, index) {
-        return (
-          <div className="" style={Styles.indexList} key={item._id}  >
-            <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
-              <div className="list">
-                <div className="" style={{ paddingTop: "0.4rem" }} >
-                  <div
+
+
+   return list.map(function(item, index) {
+      return (
+        <div className="" style={Styles.indexList} key={item._id}>
+          <Link to={"/movie/" + item._id} style={{ width:"100%",height: "auto" }}>
+            <div className="list">
+              <div className="" style={{ paddingTop: "0.8rem" }}>
+                <div
+                  style={{
+                    height: "10rem",
+                 
+                  }}
+                >
+                <div style={{
+        width:"40%",
+        height: "100%",
+        float:"left",
+      }}>
+                  <img
+                    src={item.imglink}
                     style={{
                       width:"6rem",
-                      height: "12rem",
+                      height: "9rem"
                     }}
-                  >
-                    <img
-                      src={item.imglink}
-                      style={{
-                        width:"6rem",
-                        height: "9rem"
-                      }}
-                      alt=""
-                    />
-                    <span
-                    style={{
-                      height: "0.5rem",
-                      fontSize: "16px"
-                    }}
-                  >{item.title}
-
-                  </span>
-                  <span style={{ 
-                      height: "0.4rem",
-                      fontSize: "14px",
-                      color: "#FF9933",
-                      }}
-                      >
-                      {item.score}
-                    </span> 
-                    <span style={{ 
-                      height: "0.4rem",
-                      fontSize: "14px",
-                      color: "#FF9933",
-                      }}
-                      >分</span>
+                    alt=""
+                  />
                   </div>
+                <div style={{
+        width:"60%",
+        height: "100%",
+        float:"left",
+      }}>
+                  <span
+                  style={{
+                    height: "0.5rem",
+                    fontSize: "25px",
+                    fontWeight: "900"
+                  }}
+                >{item.title}
+
+                </span><br/>
+                <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >
+                    {item.score}
+                  </span> 
+                  <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >分</span><br/>
+                    <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "18px",
+                    color: "#888888",
+                    }}
+                    >导演：{item.director}</span>
+                    <br/>
+                    <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "18px",
+                    color: "#888888",
+                    }}
+                    >主演：{item.actor.slice(0,3)}</span>
+                    </div>
                 </div>
               </div>
-            </Link>
-          </div>
-        );
-      });
-    }
+            </div>
+          </Link>
+        </div>
+      );
+    });
+  }
+ 
   render() {
     let list = this.state.list;
     console.log(list.length)
     return (
      
-      <div className="" style={{background: "#fff"}}>
-            <div style={{float:"left"}}>
-             正在热映:
-            </div>
-            <div style={{float:"right",color:"#888888"}}>
-              全部{list.length}>
-              </div>
-            <div className="swiper-container" style={{clear:"both"}} >
-    <div className="swiper-wrapper" >
-    {this.goingMovie()}
-    </div>
-    <div className="swiper-pagination"></div>
-  </div>
-</div>
-
-
-
-        
+      <div >  
+        <div className="content native-scroll" style={{marginTop:"5.6rem"}}>
+              {this.goingMovie()}
+        </div>
+      </div>
     );
   }
 }
-class WillMovie extends React.Component {
+class Will extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -217,7 +199,7 @@ class WillMovie extends React.Component {
    //获取数据
    willData() {
     console.log("willData");
-    MovieModel.hotmovie(
+    MovieModel.willmovie(
       "",
       data => {
         this.setState({
@@ -238,97 +220,99 @@ class WillMovie extends React.Component {
   willMovie() {
     let _this = this;
     let list = this.state.list;
-    console.log(list)
-    return list.map(function(item, index) {
-        return (
-          // <div className="external">
-          <div className="swiper-slide"  style={Styles.indexList} key={item._id}  >
-            <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
-              <div className="list">
-                <div className="" style={{ paddingTop: "0.4rem" }}>
-                  <div
+
+
+   return list.map(function(item, index) {
+      return (
+        <div className="" style={Styles.indexList} key={item._id}>
+          <Link to={"/movie/" + item._id} style={{ width:"100%",height: "auto" }}>
+            <div className="list">
+              <div className="" style={{ paddingTop: "0.8rem" }}>
+                <div
+                  style={{
+                    height: "10rem",
+                 
+                  }}
+                >
+                <div style={{
+        width:"40%",
+        height: "100%",
+        float:"left",
+      }}>
+                  <img
+                    src={item.imglink}
                     style={{
                       width:"6rem",
-                      height: "12rem",
+                      height: "9rem"
                     }}
-                  >
-                    <img
-                      src={item.imglink}
-                      style={{
-                        width:"6rem",
-                        height: "9rem"
-                      }}
-                      alt=""
-                    />
-                    <span
-                    style={{
-                      height: "0.5rem",
-                      fontSize: "16px"
-                    }}
-                  >{item.title}
-
-                  </span>
-                    <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >
-                        {item.score}
-                      </span> 
-                      <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >分</span>
+                    alt=""
+                  />
                   </div>
+                <div style={{
+        width:"60%",
+        height: "100%",
+        float:"left",
+      }}>
+                  <span
+                  style={{
+                    height: "0.5rem",
+                    fontSize: "25px",
+                    fontWeight: "900"
+                  }}
+                >{item.title}
+
+                </span><br/>
+                <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >
+                    {item.score}
+                  </span> 
+                  <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >分</span><br/>
+                    <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "18px",
+                    color: "#888888",
+                    }}
+                    >导演：{item.director}</span>
+                    <br/>
+                    <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "18px",
+                    color: "#888888",
+                    }}
+                    >主演：{item.actor.slice(0,3)}</span>
+                    </div>
                 </div>
               </div>
-            </Link>
-          </div>
-       
-        );
-      });
-    }
+            </div>
+          </Link>
+        </div>
+      );
+    });
+  }
+ 
   render() {
     let list = this.state.list;
+    console.log(list.length)
     return (
-      <div className="" style={{background: "#fff"}}>
-            <div style={{float:"left"}}>
-             即将上映:
-            </div>
-            <div style={{float:"right",color:"#888888"}}>
-              全部{list.length}>
-              </div>
-                         {/* <div className="content">
-
-  <div className="swiper-container">
-    <div className="swiper-wrapper">
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1n3rZHFXXXXX9XFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i4/TB10rkPGVXXXXXGapXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1kQI3HpXXXXbSXFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-    </div>
-    <div className="swiper-pagination"></div>
-  </div>
-</div> */}
-{/* <div className="content" > */}
-
-  <div className="swiper-container" style={{clear:"both"}} >
-    <div className="swiper-wrapper" >
-    {/* <div className="external"> */}
-    {this.willMovie()}
-    </div> 
-    {/* </div>  */}
-    <div className="swiper-pagination"></div>
-  </div>
-</div>
-  
-        
+     
+      <div >  
+        <div className="content native-scroll" style={{marginTop:"5.6rem"}}>
+              {this.willMovie()}
+        </div>
+      </div>
     );
   }
 }
-class HotMovie extends React.Component {
+class Hot extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -368,96 +352,118 @@ class HotMovie extends React.Component {
   hotMovie() {
     let _this = this;
     let list = this.state.list;
-    console.log(list)
-    return list.map(function(item, index) {
-        return (
-          <div className="swiper-slide" style={Styles.indexList} key={item._id} >
-            <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
-              <div className="list">
-                <div className="" style={{ paddingTop: "0.4rem" }}>
-                  <div
+
+
+   return list.map(function(item, index) {
+      return (
+        <div className="" style={Styles.indexList} key={item._id}>
+          <Link to={"/movie/" + item._id} style={{ width:"100%",height: "auto" }}>
+            <div className="list">
+              <div className="" style={{ paddingTop: "0.8rem" }}>
+                <div
+                  style={{
+                    height: "10rem",
+                 
+                  }}
+                >
+                <div style={{
+        width:"40%",
+        height: "100%",
+        float:"left",
+      }}>
+                  <img
+                    src={item.imglink}
                     style={{
                       width:"6rem",
-                      height: "12rem",
+                      height: "9rem"
                     }}
-                  >
-                    <img
-                      src={item.imglink}
-                      style={{
-                        width:"6rem",
-                        height: "9rem"
-                      }}
-                      alt=""
-                    />
-                    <span
-                    style={{
-                      height: "0.5rem",
-                      fontSize: "16px"
-                    }}
-                  >{item.title}
-
-                  </span>
-                    <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >
-                        {item.score}
-                      </span> 
-                      <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >分</span>
+                    alt=""
+                  />
                   </div>
+                <div style={{
+        width:"60%",
+        height: "100%",
+        float:"left",
+      }}>
+                  <span
+                  style={{
+                    height: "0.5rem",
+                    fontSize: "25px",
+                    fontWeight: "900"
+                  }}
+                >{item.title}
+
+                </span><br/>
+                <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >
+                    {item.score}
+                  </span> 
+                  <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >分</span><br/>
+                    <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "18px",
+                    color: "#888888",
+                    }}
+                    >导演：{item.director}</span>
+                    <br/>
+                    <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "18px",
+                    color: "#888888",
+                    }}
+                    >主演：{item.actor.slice(0,3)}</span>
+                    </div>
                 </div>
               </div>
-            </Link>
-          </div>
-        );
-      });
-    }
+            </div>
+          </Link>
+        </div>
+      );
+    });
+  }
+ 
   render() {
     let list = this.state.list;
+    console.log(list.length)
     return (
-      <div className="" style={{background: "#fff"}}>
-            <div style={{float:"left"}}>
-             热门电影:
-            </div>
-            <div style={{float:"right",color:"#888888"}}>
-              <a>全部{list.length}></a>
-              </div>
-           
-      {/* <div className="content" > */}
-      <div className="swiper-container" style={{clear:"both"}} >
-        <div className="swiper-wrapper" >
-        {this.hotMovie()}
+     
+      <div >  
+        <div className="content native-scroll" style={{marginTop:"5.6rem"}}>
+              {this.hotMovie()}
         </div>
-        <div className="swiper-pagination"></div>
       </div>
-    </div>
-            // </div> 
     );
   }
 }
 
-class Home extends React.Component {
+class showDetail extends React.Component {
   constructor(props) {
     super(props);
+    let all = this.props.match.params.all;
+    console.log(all)
     this.state = {
       list: [],
       defaultTop: null,
+      all:all,
     };
   }
   componentDidMount() {
+  
     console.log("0-0-");
     //   this.newFunction();
       // this.goingData();
       // this.hotData();
       // this.willData();
-      this.reseat();
+      // this.reseat();
     // this.fetchData();
     console.log("0909");
   }
@@ -757,102 +763,48 @@ class Home extends React.Component {
     }
   }
   render() {
+    let all = this.state.all;
+    var select1 = all==='going'?  "tab-link active button" : "tab-link button";
+    var select11 = all==='going'?  "tab active" : "tab ";
+    var select2 = all==='will'?  "tab-link active button" : "tab-link button";
+    var select22 = all==='will'? "tab active" : "tab ";
+    var select3 = all==='hot'?  "tab-link active button" : "tab-link button";
+    var select33 = all==='hot'? "tab active" : "tab ";
+    // var select3 = all==='going'?  "tab-link active button" : "tab-link button";
+    console.log(select1)
     return (
       <div data-log="log">
         <div 
             style={{position: "absolute", height: "50px", width: "100%", top: "0px", zIndex: '2001'}}>{header()}</div>
-        {/* <main className="page page-current"> */}
+            
+            <div >
+            <div className="buttons-tab " style={{top:"50px"}}>
+      <a href="#tab1" className={select1} >正在热映</a>
+      <a href="#tab2" className={select2}>即将上映</a>
+      <a href="#tab3" className={select3}>热门电影</a>
+    </div>
 
-        
-          <div className="outerScroller" id="outerScroller" ref="outerScroller" >
-            <div
-              className="pullToRefreshBox"
-              id="pullToRefreshBox"
-              ref="pullToRefreshBox"
-            >
-              <div className="preloader" id="" ref="preloader" />
-              <div
-                className="pullToRefreshArrow"
-                id=""
-                ref="pullToRefreshArrow"
-              />
+    <div className="tabs">      
+      <div id="tab1" className={select11}>
+
+                      <Going/>
+              </div>
+              <div id="tab2" className={select22}>
+
+      <Will/>
+              </div>
+              <div id="tab3" className={select33} >
+
+      <Hot/>
+              </div>       
+
             </div>
-            <a
-              className="tab-item open-panel pull-left"
-              data-panel="#panel-left-demo"
-            >
-              {/* <span className="icon icon-me" /> */}
-            </a>
-            <SearchBar 
-            filterText={this.state.filterText}
-            />
-   
-
-            {/* <span>
-             正在热映:
-            </span>
-  
-            <ul
-              style={{ background: "#eee" }}
-              className="scroll"
-              ref="scrollList"
-            >
-              {this.hotMovie()}
-            </ul> */}
             
-  
-            {/* <div
-              style={{ background: "#eee" }}
-              className="scroll"
-              ref="scrollList"
-            >
-                    {this.goingMovie()}
-            </div> */}
-
-            
-  
-            <div
-              style={{ background: "#eee",marginTop:"130px" }}
-              className="scroll"
-              ref="scrollList"
-            >
-            <GongiMovie />
-            <WillMovie/>
-            <HotMovie/>
-           </div>
-           {/* <div className="swiper-container" style={{marginTop: "80px"}}>
-       <div className="swiper-wrapper">
-        <div className="swiper-slide">Slide 1</div>
-        <div className="swiper-slide">Slide 2</div>
-        <div className="swiper-slide">Slide 3</div>
-    </div>
-    </div> */}
-    {/* <div className="content">
-
-  <div className="swiper-container">
-    <div className="swiper-wrapper">
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1n3rZHFXXXXX9XFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i4/TB10rkPGVXXXXXGapXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1kQI3HpXXXXbSXFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-    </div>
-    <div className="swiper-pagination"></div>
-  </div>
-</div> */}
-          </div>
-        {/* </main> */}
-        <div className="panel-overlay" />
-        <div
-          className="panel panel-left panel-reveal theme-dark"
-          id="panel-left-demo"
-        >
-          {this.checkLogin()}
-          {/*<Me />*/}
-        </div> 
-      
+</div>
       </div>
         
     );
   }
 }
 
-export default Home;
+export default showDetail;

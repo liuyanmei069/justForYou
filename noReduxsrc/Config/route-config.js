@@ -146,7 +146,13 @@ class RouteConfig extends React.Component {
       </AsyncLoadModule>
     )
   }
-
+  WrapshowDetail(props){
+    return (
+      <AsyncLoadModule moduleId="route.showdetail" load={() => import('../Component/Home/showDetail')}>
+        {(Comp) => <Comp {...props} title="Page Title: WrapShowDetail"/>}
+      </AsyncLoadModule>
+    )
+  }
 
   render() {
     return (
@@ -161,13 +167,14 @@ class RouteConfig extends React.Component {
                 <Route exact name="movie" path="/movie" component={this.Wrapmovie}/>
                 <Route exact name="articleDetail" path="/indexList/:id" component={this.WrapArticleDetail}/>
                 <Route exact name="movieDetail" path="/movie/:id" component={this.WrapMovieDetail}/>
-                <Route exact name="discussion" path="/movieDetail/:id" component={this.WrapDiscussion}/>
+                <Route exact name="discussion" path="/movie/:movieid/:discussionid" component={this.WrapDiscussion}/>
                 <Route exact path="/create" component={this.WrapCreate}/>
                 <Route exact path="/create/:id" component={this.WrapCreate}/>
                 <Route exact path="/me" component={this.WrapMe}/>
                 <Route exact path="/login" component={this.WrapLogin}/>
                 <Route exact path="/myArticle" component={this.WrapMyArticle}/>
-                <Route exact name="searchMovie" path="/searchMovie" component={this.WrapSearchMovie}/>
+                <Route exact name="/searchMovie" path="/searchMovie" component={this.WrapSearchMovie}/>
+                <Route exact name="/showDetail" path="/showDetail/:all" component={this.WrapshowDetail}/>
               </Switch>
             </div>
           </div>

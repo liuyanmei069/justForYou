@@ -14,9 +14,7 @@ body {
     -webkit-text-size-adjust: none;
 }
 
-a {
-    color: #14ADE5;
-}
+
 a:hover {
     text-decoration: none;
 }

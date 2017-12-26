@@ -16,7 +16,8 @@ let Styles = {
     background: "#fff",
     paddingLeft: "0.75rem",
     paddingBottom: "0.3rem",
-    marginTop: "50px",
+    marginTop: "90px",
+    marginBottom:"50px",
 
 
     imgBack:{
@@ -71,7 +72,22 @@ let Styles = {
 }
 
 
-
+let header = () => {
+  return (
+    <header className="bar bar-nav" style={{backgroundColor:"#0099FF",color:"#FFFFFF"}}>
+      {/* <a
+      className="tab-item open-panel pull-left"
+      data-panel="#panel-left-demo"
+      > */}
+      <a className="button button-link button-nav pull-left back" style={{color:"#FFFFFF"}} href="">
+      <span className="icon icon-left" style={{color:"#FFFFFF"}}></span>
+      返回
+  </a>
+    {/* </a> */}
+      <h1 className="title" style={{color:"#FFFFFF"}}>选电影</h1>
+    </header>
+    )
+  }
 
 
 
@@ -86,19 +102,6 @@ class MovieDetail extends React.Component {
     this.state = {
       commentList: [],
       movie:'',
-    //   title:'',
-    //   years:'',
-    //   director:'',
-    //   actor:'',
-    //   style:'',
-    //   country:'',
-    //   showtime:'',
-    //   movietime:'',
-    //   imglink:'',
-    //   imdb:'',
-    //   imdbLink:'',
-    //   score:'',
-    //   descript:'',
       author: '',
       comment: [],
       show:false,
@@ -107,6 +110,8 @@ class MovieDetail extends React.Component {
       dcontent: '',
       pageTitle: '发表文章',
       discussion:[],
+      cpublish:0,
+      dpublish:0,
       // articleId: null
 
     }
@@ -120,6 +125,7 @@ class MovieDetail extends React.Component {
     //   this.discussData(articleId);
     //   this.setState({pageTitle: '修改文章', articleId: articleId})
     // }
+    
    MovieModel.fetchMovie(movie_id, (data) => {
       this.setState({
           movie:data.content,
@@ -183,10 +189,12 @@ class MovieDetail extends React.Component {
       return;
     }
     let thisSpan = e.nativeEvent.target;
-    let movieId = thisSpan.getAttribute("data-movieid");
+    let movieId = this.props.match.params.id;
+    let discussionId = thisSpan.getAttribute("data-discussionid");
     let params = {
       userId: userToken,
-      movieId: movieId
+      movieId: movieId,
+      discussionId,
     };
     MovieModel.giveStar(
       params,
@@ -267,7 +275,7 @@ class MovieDetail extends React.Component {
       console.log(item._id);
       return (
         <li className="" style={Styles.indexList} key={item._id}>
-          <Link to={"/movieDetail/" + item._id} style={{ display: "block" }}>
+          <Link to={"/movie/" + movieId +'/'+ item._id} style={{ display: "block" }}>
             <div className="list">
               <div className="" style={{ paddingTop: "0.4rem" }}>
                 <div
@@ -318,12 +326,13 @@ class MovieDetail extends React.Component {
               onClick={e => {
                 _this.giveStar(e);
               }}
-              data-movieId={item._id}
+    
+              data-discussionId={item._id}
             >
               {" "}
               {item.star.length}
             </span>
-            <span className="icon icon-message"> {item.commentNum}</span>
+            <span className="icon icon-message"> {item.dcommentNum}</span>
           </div>
         </li>
       );
@@ -388,7 +397,7 @@ class MovieDetail extends React.Component {
       title: '',
       dcontent: ''
     })
-    location.hash = '/discussion'
+    location.hash = '/movie/'+this.state.movie._id
   }
 
 
@@ -442,6 +451,7 @@ class MovieDetail extends React.Component {
     let movieId = this.props.match.params.id;
     let userId = UserModel.fetchToken();
     if (userId) {
+     
       let params = {
         title:title,
         dcontent:dcontent,
@@ -450,14 +460,30 @@ class MovieDetail extends React.Component {
         token: this.state.token,
       }
         MovieModel.discussion(params, (data) => {
-        console.log(data);
-        $.toast(data.content);
-        this.refs.discussText.value = '';
-        this.componentDidMount();
-      }, (err) => {
-        console.log(err)
-      })
-    } else {
+  //       console.log(data);
+  //       $.toast(data.content);
+  //       this.refs.discussText.value = '';
+  //       this.componentDidMount();
+  //     }, (err) => {
+  //       console.log(err)
+  //     })
+  //   } else {
+  //     $.alert('您还没有登录')
+  //   }
+  // }
+  // this.setState({dpublish:1});
+  // console.log(dpublish)
+  $.toast(data.content);
+
+  location.hash = '/movie/'+this.state.movie._id
+  this.refs.title.value = '';
+  this.refs.dcontent.value = '';
+  this.componentDidMount();
+  
+}, (err)=> {
+  $.alert(err)
+})
+} else {
       $.alert('您还没有登录')
     }
   }
@@ -588,19 +614,125 @@ class MovieDetail extends React.Component {
 
   render() {
     const show = this.state.show;
+    const dpublish = this.state.dpublish;
     var ifClick = show===true?  Styles.clickStyle : Styles.unclickStyle;
     var ifShow = show===true?  Styles.showRest : Styles.unshowRest;
+    var dispublish = dpublish===1?  "button button-fill button-warning close-popup" : "button button-fill button-warning ";
     console.log(show)
     var mm = this.state.movie.actor;
     return (
-      <div className="content native-scroll">
+      <div className="page-group">
+      <div data-log="log" id="page-fixed-tab">
+          
+          <div className="popup popup-about">
+  <div className="content-block">
+  <div style={{float:"left"}}>
+  <p><Link to={"/movie/"+this.state.movie._id}  className="close-popup">取消</Link></p></div>
+  <div style={{float:"right"}}>
+  <a onClick={() => {
+            this.handleComment()
+          }} className="button button-fill button-warning close-popup">发表</a></div>
+          <div style={{clear:"both"}}>
+          <input type="text" style={{border: 'none'}} ref="commentText" className="col-75 commentInput"
+                 placeholder="说点什么吧" onChange={this.checkLogin}/> </div>
+
+</div>
+</div>
+<div className="popup popup-discussion">
+  <div className="content-block">
+
+  <div style={{float:"left"}}>
+  <p><Link to={"/movie/"+this.state.movie._id}  className="close-popup">取消</Link></p></div>
+  <div style={{float:"right"}}>
+  <a onClick={() => {
+            this.handleDiscussion()
+          }} className="button button-fill button-warning close-popup">发表</a></div>
+          <div style={{clear:"both"}}>
+          {/* <input type="text" style={{border: 'none'}} ref="discussText" className="col-75 commentInput"
+                 placeholder="说点什么吧" onChange={this.checkLogin}/> </div> */}
+                 <ul>
+              <li >
+                <div className="item-content">
+                  <div className="item-inner" style={{borderBottom: "2px solid #eee"}}>
+                    <div className="item-input">
+                      <input type="text" ref="title" placeholder="请输入标题" value={this.state.title} onChange={
+                        this.handleChangeVal
+                      }/>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li className="align-top">
+                <div className="item-content">
+                  <div className="item-inner">
+                    <div className="item-input">
+                      <textarea placeholder="请输入内容" ref="dcontent" style={{height: "13rem"}} onChange={
+                        this.handleChangeVal
+                      } value={this.state.dcontent}/>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            </div>
+
+  {/* <div>
+        <header className="bar bar-nav">
+          <h1 className='title'>{this.state.pageTitle}</h1>
+        </header>
+        <div className="content">
+          <div className="list-block">
+            <ul>
+              <li >
+                <div className="item-content">
+                  <div className="item-inner" style={{borderBottom: "2px solid #eee"}}>
+                    <div className="item-input">
+                      <input type="text" ref="title" placeholder="请输入标题" value={this.state.title} onChange={(e)=> {
+                        this.handleChangeVal(e, 'title')
+                      }}/>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li className="align-top">
+                <div className="item-content">
+                  <div className="item-inner">
+                    <div className="item-input">
+                      <textarea placeholder="请输入内容" ref="content" style={{height: "13rem"}} onChange={(e)=> {
+                        this.handleChangeVal(e, 'content')
+                      }} value={this.state.content}/>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div className="content-block">
+            <div className="row">
+              <div className="col-50"><a className="button button-big button-fill button-danger" onClick={(e)=> {
+                this.handleCancel(e)
+              }}>取消</a></div>
+              <div className="col-50"><a className="button button-big button-fill button-success" onClick={(e)=> {
+                this.handlePublish(e)
+              }}>发表</a></div>
+            </div>
+          </div>
+        </div>
+      </div> */}
+    </div>
+    </div>
+    
+      <div 
+      style={{position: "absolute", height: "50px", width: "100%", top: "0px", zIndex: '2001'}}>{header()}</div>
+      <div className="content native-scroll" style={Styles.index}>
   
         {/* <div className="content" dataType="">        */}
-      <div style={Styles.index}>
+      <div >
 
         {/* <main className="detailContent"> */}
-          <span className="clearPt"style={{fontSize: "30px"}}>{this.state.movie.title}{this.state.movie.years}</span>
+         
           <div>
+          <span className="clearPt"style={{fontSize: "30px"}}>{this.state.movie.title}{this.state.movie.years}</span>
             <div>
               <div style={{
             width:"25%",
@@ -661,14 +793,14 @@ class MovieDetail extends React.Component {
           <span style={ifShow}>{this.restControl(this.state.movie.description)}</span>
           </div>
           
-            <div className="buttons-tab fixed-tab" style={{top:"0px"}}>
+            <div className="buttons-tab fixed-tab" style={{top:"50px"}} offSet="44">
       <a href="#tab1" className="tab-link active button">评论</a>
       <a href="#tab2" className="tab-link button">讨论区</a>
     </div>
     
     
     
-          <div className="tabs">
+          <div className="tabs" style={{paddingTop:"1rem"}}>
             
       <div id="tab1" className="tab active" style={{paddingTop:"2rem"}}>
         {/* <div className="content-block"> */}
@@ -692,103 +824,8 @@ class MovieDetail extends React.Component {
               </div></div>
             
             
-      
-            <div className="popup popup-about">
-  <div className="content-block">
-  <div style={{float:"left"}}>
-  <p><Link to={"/movie/"+this.state.movie._id}  className="close-popup">取消</Link></p></div>
-  <div style={{float:"right"}}>
-  <a onClick={() => {
-            this.handleComment()
-          }} className="button button-fill button-warning close-popup">发表</a></div>
-          <div style={{clear:"both"}}>
-          <input type="text" style={{border: 'none'}} ref="commentText" className="col-75 commentInput"
-                 placeholder="说点什么吧" onChange={this.checkLogin}/> </div>
+    
 
-</div>
-</div>
-<div className="popup popup-discussion">
-  <div className="content-block">
-
-  <div style={{float:"left"}}>
-  <p><Link to={"/movie/"+this.state.movie._id}  className="close-popup">取消</Link></p></div>
-  <div style={{float:"right"}}>
-  <a onClick={() => {
-            this.handleDiscussion()
-          }} className="button button-fill button-warning close-popup">发表</a></div>
-          <div style={{clear:"both"}}>
-          {/* <input type="text" style={{border: 'none'}} ref="discussText" className="col-75 commentInput"
-                 placeholder="说点什么吧" onChange={this.checkLogin}/> </div> */}
-                 <ul>
-              <li >
-                <div className="item-content">
-                  <div className="item-inner" style={{borderBottom: "2px solid #eee"}}>
-                    <div className="item-input">
-                      <input type="text" ref="title" placeholder="请输入标题" value={this.state.title} onChange={(e)=> {
-                        this.handleChangeVal(e, 'title')
-                      }}/>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <li className="align-top">
-                <div className="item-content">
-                  <div className="item-inner">
-                    <div className="item-input">
-                      <textarea placeholder="请输入内容" ref="dcontent" style={{height: "13rem"}} onChange={(e)=> {
-                        this.handleChangeVal(e, 'dcontent')
-                      }} value={this.state.dcontent}/>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-            </div>
-  {/* <div>
-        <header className="bar bar-nav">
-          <h1 className='title'>{this.state.pageTitle}</h1>
-        </header>
-        <div className="content">
-          <div className="list-block">
-            <ul>
-              <li >
-                <div className="item-content">
-                  <div className="item-inner" style={{borderBottom: "2px solid #eee"}}>
-                    <div className="item-input">
-                      <input type="text" ref="title" placeholder="请输入标题" value={this.state.title} onChange={(e)=> {
-                        this.handleChangeVal(e, 'title')
-                      }}/>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <li className="align-top">
-                <div className="item-content">
-                  <div className="item-inner">
-                    <div className="item-input">
-                      <textarea placeholder="请输入内容" ref="content" style={{height: "13rem"}} onChange={(e)=> {
-                        this.handleChangeVal(e, 'content')
-                      }} value={this.state.content}/>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div className="content-block">
-            <div className="row">
-              <div className="col-50"><a className="button button-big button-fill button-danger" onClick={(e)=> {
-                this.handleCancel(e)
-              }}>取消</a></div>
-              <div className="col-50"><a className="button button-big button-fill button-success" onClick={(e)=> {
-                this.handlePublish(e)
-              }}>发表</a></div>
-            </div>
-          </div>
-        </div>
-      </div> */}
-    </div>
-    </div>
 {/* <div id="page-fixed-tab" className="page page-current">
 <div className="content native-scroll">
     <p>其他内容区域</p>
@@ -938,6 +975,8 @@ class MovieDetail extends React.Component {
           }} className="button" style={{weight:"2rem"}}>写短评</a> */}
         </div>
       {/* </div> */}
+      </div>
+      </div>
       </div>
 
     )

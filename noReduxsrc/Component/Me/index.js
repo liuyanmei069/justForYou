@@ -51,9 +51,11 @@ class Me extends React.Component {
     }
     var avatarForm = this.refs.avatarForm;
     let data = new FormData(avatarForm);
+    console.log(data)
     // data.append('img',data);
     var token = UserModel.fetchToken();
     data.append('token', token)
+    console.log(data)
     UserModel.uploadAvatar(data, (data) => {
       $.toast(data.content);
       this.componentDidMount()

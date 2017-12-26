@@ -54,6 +54,7 @@ function _upload(_api, _formdata, _onSuccess, _onError) {
 
   // Manual XHR & FormData
   let oReq = new XMLHttpRequest();
+  console.log("33333333",oReq);
   oReq.open("POST", _api);
   oReq.onload = (e) => {
     let ret = JSON.parse(oReq.responseText)
@@ -67,6 +68,7 @@ function _upload(_api, _formdata, _onSuccess, _onError) {
   };
   // oReq.upload.onprogress = updateProgress;
   oReq.send(_formdata);
+  console.log(_formdata)
 }
 
 
@@ -143,6 +145,9 @@ let MovieModel = {
   goingmovie: (_params, _success, _error) => {
     _request('GET', `${API}movie/goingmovie`, _params, _success, _error)
   },
+  willmovie: (_params, _success, _error) => {
+    _request('GET', `${API}movie/willmovie`, _params, _success, _error)
+  },
   hotmovie: (_params, _success, _error) => {
     _request('GET', `${API}movie/hotmovie`, _params, _success, _error)
   },
@@ -161,8 +166,11 @@ let MovieModel = {
   giveStar: (_params, _success, _error) => {
     _request('POST', `${API}movie/giveStar`, _params, _success, _error)
   },
-  fetchDiscuss: (_id, _success, _error) => {
-    _request('GET', `${API}movie/fetchDiscuss/${_id}`, null, _success, _error)
+  fetchDiscuss: (_id1,_id2, _success, _error) => {
+    _request('GET', `${API}movie/fetchDiscuss/${_id1}/${_id2}`, null, _success, _error)
+  },
+  dcomment: (_params, _success, _error) => {
+    _request('POST', `${API}movie/dcomment`, _params, _success, _error)
   },
   
 

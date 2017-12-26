@@ -4,6 +4,7 @@ var formidable = require('formidable');
 var router = express.Router();
 var path = require('path');
 var fs = require('fs');
+ var ObjectId = require('mongodb').ObjectId;
 
 var router = express.Router();
 var API = 'http://localhost:4545';
@@ -220,7 +221,7 @@ router.post("/movieList", function(req, res) {
                 orderObj[orderBy] = order;
                 // var movie = req.body;
                 // Model('Movie').find({"$and":[{'style':/动作/},{'country':/大陆/},{'years':/(2017)/}]},function (err,docs) {
-                Model('Movie').find({'years':/(2017)/},null, null,function (err,docs) {
+                Model('Movie').find({'showtime':/(2016)/},null, null,function (err,docs) {
                 //  Model('Movie').find(function (err,docs) {
                     var goingmovie=[];
                     docs.forEach(function (item) {
@@ -248,6 +249,42 @@ router.post("/movieList", function(req, res) {
                 })
             })
 
+            router.get('/willmovie',function (req,res) {
+                
+                        var orderBy = 'showtime';
+                        var order = -1;
+                        var orderObj = {};
+                        orderObj[orderBy] = order;
+                        // var movie = req.body;
+                        // Model('Movie').find({"$and":[{'style':/动作/},{'country':/大陆/},{'years':/(2017)/}]},function (err,docs) {
+                        Model('Movie').find({'years':/(2017)/},null, null,function (err,docs) {
+                        //  Model('Movie').find(function (err,docs) {
+                            var willmovie=[];
+                            docs.forEach(function (item) {
+                                willmovie.push({
+                                    title:item.title,
+                                    years:item.years,
+                                    director:item.director,
+                                    actor:item.actor,
+                                    style:item.style,
+                                    country:item.country,
+                                    showtime:item.showtime,
+                                    movietime:item.movietime,
+                                    imglink:item.imglink,
+                                    imdb:item.imdb,
+                                    imdbLink:item.imdbLink,
+                                    score:item.score,
+                                    description:item.description,
+                                    _id:item._id,
+                                    pv:item.pv,
+                                    star:item.star,
+                                    commentNum:item.comments.length,
+                                })
+                            })
+                            res.send(willmovie)
+                        })
+                    })
+
     router.get('/hotmovie',function (req,res) {
 
         var orderBy = 'showtime';
@@ -256,7 +293,7 @@ router.post("/movieList", function(req, res) {
         orderObj[orderBy] = order;
         // var movie = req.body;
         // Model('Movie').find({"$and":[{'style':/动作/},{'country':/大陆/},{'years':/(2017)/}]},function (err,docs) {
-        Model('Movie').find({'score':/9/},null, { skip: 1, limit: 5 },function (err,docs) {
+        Model('Movie').find({'score':/9/},null,function (err,docs) {
         //  Model('Movie').find(function (err,docs) {
             var hotmovie=[];
             docs.forEach(function (item) {
@@ -287,25 +324,41 @@ router.post("/movieList", function(req, res) {
     router.get('/fetchMovie/:id',function (req,res) {
         var movie_id=req.params.id;
         var movie = [];
-        Model('Movie').findById(movie_id).populate('user').populate('comments.user').exec(function (err,doc) {
+        var orderBy = 'comments.createAt';
+        var order = -1;
+        var orderObj = {};
+        orderObj[orderBy] = order;
+        Model('Movie').findById(movie_id).populate('user').populate('discussion.user').populate('comments.user').exec(function (err,doc) {
             if(err){
                 res.send(err)
             }else{
                 if(doc){
                     var comments = doc.comments;
+                    console.log("#######",comments);
                     var commentsList = [];
+                  
                     var discussion =doc.discussion;
+                    console.log("66666666",discussion);
+                    // var discussionhh = doc.discussion.id(ObjectId('5a2fa020c1400f206083f546'));
+                    // console.log("ddddd",discussionhh);
+               
                     var discussList = [];
                     comments.forEach(function (item) {
+                        console.log()
+                        // console.log('jjjjjjjjjj',item)
                         commentsList.push({
                             username:item.user.username,
                             userId:item.user._id,
                             avatar:item.user.avatar,
                             createAt:item.createAt,
                             comment:item.content,
+                            createAt:item.createAt,
                         })
                     })
+                    var sortComments = commentsList.reverse()
+                    console.log("asdasfdsv",sortComments)
                     discussion.forEach(function (item) {
+                        // console.log('ggggggggggg',item);
                         discussList.push({
                             title:item.title,
                             dcontent:item.dcontent,
@@ -315,8 +368,10 @@ router.post("/movieList", function(req, res) {
                             star:item.star,
                             _id:item._id,
                             dcommentNum:item.dcomments.length,
+                            createAt:item.createAt,
                         })
                     })
+                    var sortDiscuss = discussList.reverse()
                         movie = ({
                             title:doc.title,
                             years:doc.years,
@@ -331,53 +386,139 @@ router.post("/movieList", function(req, res) {
                             imdbLink:doc.imdbLink,
                             score:doc.score,
                             description:doc.description,
-                            comments:commentsList,
+                            comments:sortComments,
                             _id:doc._id,
-                            discussion:discussList,
+                            discussion:sortDiscuss,
                         })
+                        
+                        // console.log("33333",doc)
+                        // console.log("33333",movie)
+                        // var disscussion1 = doc.discussion.id(discussion_id)
+                        // console.log("hhhh",disscussion1)
                     res.send({id:1,content:movie})
+                    console.log("33333",movie.comments)
                 }
             }
         })
     })
    
-    router.get('/fetchDiscuss/:id',function (req,res) {
-        var discussion_id=req.params.id;
-        console.log(toString(discussion_id))
+    router.get('/fetchDiscuss/:id1/:id2',function (req,res) {
+        var movie_id = req.params.id1;
+        var discussion_id=req.params.id2;
+        console.log('ooooooooooo',discussion_id);
+        console.log(movie_id);
+        console.log('hhhhhhhhhhhhhhhhhhhhh',req.params.id1);
+        // var sid = mongoose.Types.ObjectId(discussion_id)
+        // var ObjectId = require('mongodb').ObjectId;
         var discussMovie = [];
-        Model('Movie').find({'discussion._id':{$ne:discussion_id}}).populate('user').populate('discussion.dcomments.user').exec(function (err,doc) {
+        var orderBy = 'createAt';
+        var order = -1;
+        var orderObj = {};
+        orderObj[orderBy] = order;
+        // Model('Movie').find({'discussion._id':ObjectId(discussion_id)}).populate('user').populate('discussion.dcoments.user').exec(function (err,doc) {
+            Model('Movie').findById(movie_id).sort(orderObj).populate('user').populate('discussion.user').populate('discussion.dcomments.user').exec(function (err,doc) {
+            
             if(err){
                 res.send(err)
             }else{
                 if(doc){
-                    var dcomments = doc.discussion.dcomments;
+                    var discussion = doc.discussion;
+                    console.log("55555",discussion);
+                    var listDiscuss = [];
+                    discussion.forEach(function (item) {
+                        listDiscuss.push({
+                            title:item.title,
+                            dcontent:item.dcontent,
+                            createAt:item.createAt,
+                            author:{_id:item.user._id,avatar:item.user.avatar,username:item.user.username},
+                            pv:item.pv,
+                            star:item.star,
+                            _id:item._id,
+                            dcomments:item.dcomments,
+                            dcommentNum:item.dcomments.length,
+                        })
+                    })
+                    console.log("ssssssssssss",listDiscuss)
+                    movie = ({
+                        title:doc.title,
+                        years:doc.years,
+                        director:doc.director,
+                        actor:doc.actor,
+                        style:doc.style,
+                        country:doc.country,
+                        showtime:doc.showtime,
+                        movietime:doc.movietime,
+                        imglink:doc.imglink,
+                        imdb:doc.imdb,
+                        imdbLink:doc.imdbLink,
+                        score:doc.score,
+                        description:doc.description,
+                        _id:doc._id,
+                        discussion:listDiscuss,
+                    })
+                    // var dcomments = discussion.dcomments;
+                    // console.log('6969696969',dcomments)
+                    // var dcommentsList = [];
+                    // dcomments.forEach(function (item) {
+                    //     dcommentsList.push({
+                    //         username:item.user.username,
+                    //         userId:item.user._id,
+                    //         avatar:item.user.avatar,
+                    //         createAt:item.createAt,
+                    //         comment:item.content,
+                    //     })
+                    // })
+
+                    // discussion.forEach(function (item) {
+                    //     discussList.push({
+                    //         title:item.title,
+                    //         dcontent:item.dcontent,
+                    //         createAt:item.createAt,
+                    //         author:{_id:item.user._id,avatar:item.user.avatar,username:item.user.username},
+                    //         pv:item.pv,
+                    //         star:item.star,
+                    //         _id:item._id,
+                    //         dcommentNum:item.dcomments.length,
+                    //     })
+                    // })
+                    var discussion = doc.discussion.id(discussion_id);
+                    // console.log("ddddd",discussion);
+                    var dcomments = discussion.dcomments;
+                    // console.log('6969696969',dcomments)
                     var dcommentsList = [];
                     dcomments.forEach(function (item) {
+                        // console.log(".............",item)
                         dcommentsList.push({
                             username:item.user.username,
                             userId:item.user._id,
                             avatar:item.user.avatar,
                             createAt:item.createAt,
-                            comment:item.content,
+                            comment:item.ddcontent,
                         })
                     })
+                    
+                    // console.log("!!!!!!!!!!!!",dcommentsList);
                         discussMovie = ({
-                            title:doc.discussion.title,
-                            dcontent:doc.discussion.dcontent,
-                            createAt:doc.discussion.createAt,
-                            pv:doc.discussion.pv,
-                            star:doc.discussion.star,
-                            _id:doc.discussion._id,
-                            dcommentNum:doc.discussion.dcomments.length,
-                            author:{_id:doc.user._id,avatar:doc.user.avatar,username:doc.user.username},
+                            
+                            title:discussion.title,
+                            dcontent:discussion.dcontent,
+                            createAt:discussion.createAt,
+                            pv:discussion.pv,
+                            star:discussion.star,
+                            _id:discussion._id,
+                            // dcommentNum:doc.discussion.dcomments.length,
+                            author:{_id:discussion.user._id,avatar:discussion.user.avatar,username:discussion.user.username},
                             dcomments:dcommentsList,
-            
+                            dcommentNum:dcomments.length,
                         })
+                    console.log('11111',doc);
+                    console.log('2222',discussMovie)
                     res.send({id:1,content:discussMovie})
                   
                 }
             }
         })
+// console.log('11111',doc);
 
     })
 
@@ -386,17 +527,22 @@ router.post("/movieList", function(req, res) {
         var info  = req.body;
         var userid = info.userId;
         var movieId = info.movieId;
+        var discussionId = info.discussionId;
+        console.log("%%%%%%%%%%%",movieId);
+        console.log("$$$$$$$$$$",discussionId);
         // var discussion = info.discussion;
-        Model('Movie').findById(movieId).populate('discussion.creatAt').exec(function (err,doc) {
+        Model('Movie').findById(movieId).populate('discussion.user').exec(function (err,doc) {
+            var discussion = doc.discussion.id(discussionId);
+            console.log("0123456",discussion);
             if(err){
                 res.send(err)
             }else{
-                var star = doc.star;
+                var star = discussion.star;
                 console.log(star)
                 for(var i=0;i<star.length;i++){
                     if(star[i]==userid){
                         star.splice(i,1);
-                        Model('Movie').update({_id:movieId}.discussion.createAt,{$set:{star:star}},function (err,result) {
+                        Model('Movie').update({_id:movieId,'discussion._id':discussionId},{$set:{'discussion.$.star':star}},function (err,result) {
                         if(err){
                             res.send(err)
                         }else{
@@ -407,7 +553,7 @@ router.post("/movieList", function(req, res) {
                     }
                 }
                 star.push(userid);
-                Model('Movie').update({_id:movieId}.discussion.createAt,{$set:{star:star}},{$set:{star:star}},function (err,result) {
+                Model('Movie').update({_id:movieId,'discussion._id':discussionId},{$set:{'discussion.$.star':star}},function (err,result) {
                     if(err){
                         res.send(err)
                     }else{
@@ -423,6 +569,8 @@ router.post("/movieList", function(req, res) {
         var info = req.body;
         var movieId=info.movieId;
         var userId = info.userId;
+        
+        console.log('fffffffffffff',userId);
         var comment = info.comment;
         var createAt = Date.now();
         Model('Movie').update({_id:movieId},{
@@ -438,23 +586,33 @@ router.post("/movieList", function(req, res) {
     
     router.post('/dcomment',function (req,res) {
         var info = req.body;
-        var movieId=info.movieId;
+        var movieId=info.movie_id;
+        var discussionId=info.discussion_id;
         var userId = info.userId;
-        var comment = info.comment;
+        var dcomment = info.dcomment;
         var createAt = Date.now();
-        Model('Movie').update({_id:movieId},{
-            $push:{dcomments:{user:userId,content:comment,createAt:createAt}}},function(err,newDoc){
+        // console.log("kkkkkkkkk",movieId)
+        // console.log("ccccccccccccccc",dcomment)
+            Model('Movie').update({_id:movieId,'discussion._id':discussionId},{
+            $push:{'discussion.$.dcomments':{user:userId,ddcontent:dcomment,createAt:createAt}}},function(err,newDoc){
             if(err){
                 res.send(err);
             }else{
-                res.send({title:1,content:'评论成功'})
-            }
-        })
+                res.send({title:1,content:'发表成功'})
+            };
+        
+        });
+    //     return;
+    // };
+// };
+//         };
+        // });
     });
     router.post('/discussion',function (req,res) {
         var info = req.body;
         var movieId=info.movieId;
         var userId = info.userId;
+        console.log("iiiiiiii",userId)
         var dcomment = info.dcomment;
         var discussion = info.discussion;
         var title=info.title;
@@ -483,6 +641,7 @@ router.post("/movieList", function(req, res) {
             }
         })
         // })
+        // Model('Movie').save(callback)
         
     });
     // router.get('/discussion',function (req,res) {

@@ -18,44 +18,44 @@ import ReactDOM from 'react-dom';
 import querystring from 'querystring';
 import ReactSwipe from 'react-swipe';
 import  './index.css';
-const query = querystring.parse(window.location.search.slice(1));
+// const query = querystring.parse(window.location.search.slice(3));
 
-// generate slide panes
-const numberOfSlides = parseInt(query.slidesNum, 10) || 20;
-const paneNodes = Array.apply(null, Array(numberOfSlides)).map((_, i) => {
-  return (
-    <div key={i} style={{display:"inline"}}>
-      <div className="item" style={{display:"inline"}}>{i}</div>
-      <div className="item"style={{display:"inline"}}>{i}</div>
-      <div className="item"style={{display:"inline"}}>{i}</div>
-    </div>
-  //   <div id='slider' class='swipe'>
-  //   <div class='swipe-wrap'>
-  //     <div>1</div>
-  //     <div>2</div>
-  //     <div>3</div>
-  //   </div>
-  // </div>
+// // generate slide panes
+// const numberOfSlides = parseInt(query.slidesNum, 10) || 20;
+// const paneNodes = Array.apply(null, Array(numberOfSlides)).map((_, i) => {
+//   return (
+//     <div key={i} style={{display:"inline"}}>
+//       <div className="item" style={{display:"inline"}}>{i}</div>
+//       <div className="item"style={{display:"inline"}}>{i}</div>
+//       <div className="item"style={{display:"inline"}}>{i}</div>
+//     </div>
+//   //   <div id='slider' class='swipe'>
+//   //   <div class='swipe-wrap'>
+//   //     <div>1</div>
+//   //     <div>2</div>
+//   //     <div>3</div>
+//   //   </div>
+//   // </div>
   
-  );
-});
+//   );
+// });
 
-// change Swipe.js options by query params
-const startSlide = parseInt(query.startSlide, 10) || 0;
-const swipeOptions = {
-  startSlide: startSlide < paneNodes.length && startSlide >= 0 ? startSlide : 0,
-  auto: parseInt(query.auto, 10) || 0,
-  speed: parseInt(query.speed, 10) || 300,
-  disableScroll: query.disableScroll === 'true',
-  continuous: query.continuous === 'true',
-  slidesPerView : query.slidesPerView === '3',
-  // callback() {
-  //   console.log('slide changed');
-  // },
-  // transitionEnd() {
-  //   console.log('ended transition');
-  // }
-};
+// // change Swipe.js options by query params
+// const startSlide = parseInt(query.startSlide, 10) || 0;
+// const swipeOptions = {
+//   startSlide: startSlide < paneNodes.length && startSlide >= 0 ? startSlide : 0,
+//   auto: parseInt(query.auto, 10) || 0,
+//   speed: parseInt(query.speed, 10) || 300,
+//   disableScroll: query.disableScroll === 'true',
+//   continuous: query.continuous === 'true',
+//   slidesPerView : query.slidesPerView === '3',
+//   // callback() {
+//   //   console.log('slide changed');
+//   // },
+//   // transitionEnd() {
+//   //   console.log('ended transition');
+//   // }
+// };
 let Styles = {
   indexList: {
     paddingRight: "0.75rem",
@@ -68,7 +68,7 @@ let Styles = {
     display: "inline-block",
     // display:"vertical-align:top",
     verticalAlign:"top",
-   marginTop: "30px",
+   marginTop: "1.5rem",
  
     
   },
@@ -125,9 +125,9 @@ class SearchBar extends React.Component {
       <div>
     <div className="bar bar-header-secondary" style={{marginTop:'50px'}}>
       <div className="searchbar">
-        <a className="searchbar-cancel">取消</a>
+        {/* <a className="searchbar-cancel">取消</a> */}
         <div className="search-input">
-        <Link to={'searchMovie'} >
+        <Link to={'/searchMovie'} >
           <label className="icon icon-search" htmlFor="search"></label>
           <input className="open-about" value={this.props.filterText} onChange={this.handleFilterTextInputChange} type="search" id='search' placeholder='输入关键字...'/>
           </Link>
@@ -140,212 +140,323 @@ class SearchBar extends React.Component {
 }
 // export default SearchBar;
 
-class GongiMovie extends React.Component {
+class GongiMovie extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      list: [],
-      defaultTop: null,
-      isToggleOn: true
-    };
-      // 这个绑定是必要的，使`this`在回调中起作用
-      this.next = this.next.bind(this);
-      this.prev = this.prev.bind(this);
-  }
-  componentDidMount() {
-    console.log("0-0-");
-      this.goingData();
-    console.log("0909");
-  }
-  goingData() {
-    console.log("goingData");
-    MovieModel.goingmovie(
-      "",
-      data => {
-        this.setState({
-          list: data
-        });
-        this.loadingFinish(
-          this.refs.outerScroller,
-          this.refs.preloader,
-          this.refs.scrollList
-        );
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //列表
-  goingMovie() {
-    let _this = this;
-    let list = this.state.list;
-    console.log(list.length)
-      {/* <div className="content">
+    this.state = {isToggleOn: true};
 
-  <div className="swiper-container">
-    <div className="swiper-wrapper">
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1n3rZHFXXXXX9XFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i4/TB10rkPGVXXXXXGapXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1kQI3HpXXXXbSXFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-    </div>
-    <div className="swiper-pagination"></div>
-  </div>
-</div> */}
-
-    return list.map(function(item, index) {
-        return (
-          <div className=""  style={Styles.indexList} key={item._id}  >
-            <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
-              <div className="list">
-                <div className="" style={{ paddingTop: "0.4rem" }} >
-                  <div
-                    style={{
-                      width:"6rem",
-                      height: "12rem",
-                    }}
-                  >
-                    <img
-                      src={item.imglink}
-                      style={{
-                        width:"6rem",
-                        height: "9rem"
-                      }}
-                      alt=""
-                    />
-                    <span
-                    style={{
-                      height: "0.5rem",
-                      fontSize: "16px"
-                    }}
-                  >{item.title}
-
-                  </span>
-                  <span style={{ 
-                      height: "0.4rem",
-                      fontSize: "14px",
-                      color: "#FF9933",
-                      }}
-                      >
-                      {item.score}
-                    </span> 
-                    <span style={{ 
-                      height: "0.4rem",
-                      fontSize: "14px",
-                      color: "#FF9933",
-                      }}
-                      >分</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
-        );
-      });
+    // 这个绑定是必要的，使`this`在回调中起作用
+    this.next = this.next.bind(this);
+    this.prev = this.prev.bind(this);
+    this.getPos =this.getPos.bind(this);
+    this.state={
+      // list : [0,0,0,0,0,0,0,0,0]
+      list : [0,0,0,0,0,0]
     }
-    next() {
-      
-        this.reactSwipe.next();
+    // this.state = {
+    //   list: [],
+    //   defaultTop: null,
+    // };
+    var query = querystring.parse(window.location.search);
+    console.log(query)
+    // this.index = defaultIndex;
+    // console.log(this.index)
+    // var numberOfSlides = parseInt(query.slidesNum, 10) || 20;
+    var numberOfSlides = parseInt(query.slidesNum);
+  // var e = parseInt(query.this.reactSwipe.getPos());
+  //   console.log(e)
+    this.paneNodes=[];
+    console.log(this.index)
+    // var startSlide = parseInt(query.startSlide, 10) || 0;
+    var startSlide = parseInt(query.startSlide) || 0;
+    console.log(startSlide)
+    this.swipeOptions = {
+      startSlide: startSlide < this.paneNodes.length && startSlide >= 0 ? startSlide : 0,
+      // auto: parseInt(query.auto, 10) || 0,
+      auto: parseInt(query.auto) || 4000,
+      speed: parseInt(query.speed) || 500,
+      // disableScroll: query.disableScroll === 'false',
+      disableScroll:false,
+      continuous:true,
+      // continuous: query.continuous === 'true',
+      // slidesPerView : query.slidesPerView === 3,
+     
+      callback(index,element) {
+        // for(element.length<=3;element.length<=9;index++){}
+        console.log('slide changed',element);
+        //  var pageNumber =this.element.getPos();
+        //  console.log(pageNumber)
+        // return index;
+        
+      },
+      transitionEnd(index,element) {
+        // console.log('ended transition',index);
+        // console.log('ended transition',element);
       }
+    };
+  }
+  componentDidMount(result){
+    MovieModel.goingmovie( "",
+    data => {
+      this.setState({
+        list: data
+        
+      });
+      console.log("4444444",list)
+    },
+    err => {
+      console.log(err);
+    }
+  )
+
+  }
+ 
+  slide(index,duration){
+    var _swipe;
     
-      prev() {
+          (_swipe = this.swipe).slide.apply(_swipe, arguments);
+        
+      
+    console.log(index)
+  }
+ 
+  next() {
+  
+    this.reactSwipe.next();
+  }
+
+  prev() {
+    this.reactSwipe.prev();
+    console.log(this.reactSwipe.prev())
+
+  }
+  getPos(){
+    // this.reactSwipe.getPos();
+    return this.reactSwipe.index;
+    // return this.index;
+    // console.log(this.index)
+    console.log(this.reactSwipe.index)
+  }
+
+  indexList() {
+    let _this = this;
+   let r = _this.state.index;
+   console.log(r)
+   let rest= _this.state.list.length % 3;
+   console.log(rest)
+   let int = _this.state.list.length - rest;
+   console.log(int)
+   let list = _this.state.list.slice(0,int);
+   var result = [];
+   for(var i =0,len=list.length;i<len;i+=3){
+     result.push(list.slice(i,i+3))
+   }
+  
+      return result.map(function(item, index) {
+        // for(var i=0;i<=3;i++){
+              console.log(item[0]._id);
+    //  return result[rindex].map(function(item, index) {
+       return(
+        // result[0].map(function(item, index) {
+          <div>
+    <div className="" style={Styles.indexList}  key={item[0]._id}>
+     <Link to={"/Movie/" + item[0]._id} style={{ width:"8rem",height: "15rem" }}>
+               <div
+               style={{
+                 width:"6rem",
+                 height: "12rem",
+               }}
+             >
+               <img
+                 src={item[0].imglink}
+                 style={{
+                   width:"6rem",
+                   height: "9rem"
+                 }}
+                 alt=""
+               />
+               <span
+               style={{
+                 height: "0.5rem",
+                 fontSize: "16px"
+               }}
+             >{item[0].title}
+
+             </span>
+               <span style={{ 
+                   height: "0.4rem",
+                   fontSize: "14px",
+                   color: "#FF9933",
+                   }}
+                   >
+                   {item[0].score}
+                 </span> 
+                 <span style={{ 
+                   height: "0.4rem",
+                   fontSize: "14px",
+                   color: "#FF9933",
+                   }}
+                   >分</span>
+               </div>
+               </Link>
+       </div>
+       <div className="" style={Styles.indexList}  key={item[1]._id}>
+       <Link to={"/Movie/" + item[1]._id} style={{ width:"8rem",height: "15rem" }}>
+               
+                 <div
+                 style={{
+                   width:"6rem",
+                   height: "12rem",
+                 }}
+               >
+                 <img
+                   src={item[1].imglink}
+                   style={{
+                     width:"6rem",
+                     height: "9rem"
+                   }}
+                   alt=""
+                 />
+                 <span
+                 style={{
+                   height: "0.5rem",
+                   fontSize: "16px"
+                 }}
+               >{item[1].title}
+  
+               </span>
+                 <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >
+                     {item[1].score}
+                   </span> 
+                   <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >分</span>
+             
+                 </div>
+                 </Link>
+         </div>
+         <div className="" style={Styles.indexList}  key={item[2]._id}>
+       <Link to={"/Movie/" + item[2]._id} style={{ width:"8rem",height: "15rem" }}>
+             
+                 <div
+                 style={{
+                   width:"6rem",
+                   height: "12rem",
+                 }}
+               >
+                 <img
+                   src={item[2].imglink}
+                   style={{
+                     width:"6rem",
+                     height: "9rem"
+                   }}
+                   alt=""
+                 />
+                 <span
+                 style={{
+                   height: "0.5rem",
+                   fontSize: "16px"
+                 }}
+               >{item[2].title}
+  
+               </span>
+                 <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >
+                     {item[2].score}
+                   </span> 
+                   <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >分</span>
        
-        this.reactSwipe.prev();
-      }
+                 </div>
+                 </Link>
+         </div>
+         </div>
+    );
+});
+  }
+
+ 
   render() {
     let list = this.state.list;
-    console.log(list.length)
     return (
-     
-      <div className="" style={{background: "#fff"}}>
-            <div style={{float:"left"}}>
-             正在热映:
+       <div className="" style={{background: "#fff"}}>
+            <div style={{float:"left",marginTop:"1rem"}}>
+             正在上映:
             </div>
-            <div style={{float:"right",color:"#888888"}}>
-              全部{list.length}>
-              </div>
-                {/* <div className="content">
-
-  <div className="swiper-container">
-    <div className="swiper-wrapper">
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1n3rZHFXXXXX9XFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i4/TB10rkPGVXXXXXGapXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1kQI3HpXXXXbSXFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-    </div>
-    <div className="swiper-pagination"></div>
-  </div>
-</div> */}
-{/* <div className="content" > */}
-
-
-
-
-
-{/* <Swiper className="swiper-container"  >
-    <div className="swiper-wrapper" >
-    {this.goingMovie()}
-    </div>
-    <div className="swiper-pagination"></div>
-  </Swiper>
-</div> */}
-{/* 
-  <Swiper className="swipe-container" onSwipeLeft={this.handleLeftSwipe}>
-  Hello world!
-</Swiper>
-
- <ReactSwipe className="carousel" swipeOptions={{continuous: false}}>
- <div>PANE 1</div>
- <div>PANE 2</div>
- <div>PANE 3</div>
-</ReactSwipe> */}
-{/* <SwiperContainer  options={{ direction: 'horizontal',
-  loop: false,
-  pagination: '.swiper-pagination',
-  slidesPerView : 3,
-  spaceBetween : 5,}} >
-  <SwiperSlide>
-    <div>
-    {this.goingMovie()}
-    </div>
-    </SwiperSlide>
-    <div className="swiper-pagination"></div>
-  </SwiperContainer> */}
-  {/* <ReactSwipe className="carousel" swipeOptions={{continuous: false}}>
-                <div>PANE 1</div>
-                <div>PANE 2</div>
-                <div>PANE 3</div>
-            </ReactSwipe> */}
-            {/* <div className="swiper-container" style={{clear:"both"}} >
-    <div className="swiper-wrapper" >
-    {this.goingMovie()}
-    </div>
-    <div className="swiper-pagination"></div>
-  </div>
-</div> */}
-
-        <ReactSwipe ref={reactSwipe => this.reactSwipe = reactSwipe} className="mySwipe" swipeOptions={swipeOptions}>
-            {/* {paneNodes} */}
-            {this.goingMovie.bind(this)}
+            <div style={{float:"left",color:"#888888",marginTop:"1rem"}}>
+            <Link to={"/showDetail/"+ "going"} >
+              全部{list.length}></Link>
+              </div> 
+              <div style={{float:"right",fontSize:"0.1rem",marginRight:"2rem",marginTop:"1rem"}} >
+          <a className="button button-fill" onClick={this.next}>&gt;</a>
+          </div>
+            <div style={{float:"right",fontSize:"0.1rem",marginRight:"1rem",marginTop:"1rem"}} ><a className="button button-fill" onClick={this.prev}>&lt;
+          </a></div>
+          <div style={{float:"right",fontSize:"1rem",marginRight:"1rem",marginTop:"1rem"}} >
+          <a onClick={this.getPos} >/2</a>
+          </div>            
+         <div style={{clear:"both"}}>    
+        <ReactSwipe ref={reactSwipe => this.reactSwipe = reactSwipe} className="mySwipe" swipeOptions={this.swipeOptions}> 
+        {this.indexList()} 
         </ReactSwipe>
-        
-
+        </div> 
         <div>
-        <button type="button" onClick={this.prev}>Prev</button>
-        <button type="button" onClick={this.next}>Next</button>
         </div>
-
-        </div>
+      </div>
     );
   }
 }
 class WillMovie extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      list: [],
-      defaultTop: null,
-    };
-  }
+    this.state = {isToggleOn: true};
+    
+        // 这个绑定是必要的，使`this`在回调中起作用
+        this.next = this.next.bind(this);
+        this.prev = this.prev.bind(this);
+        this.state={
+          list : [0,0,0,0,0,0,0,0,0,0,0,0]
+        }
+        var query = querystring.parse(window.location.search.slice(12));
+        // var numberOfSlides = parseInt(query.slidesNum, 10) || 20;
+        var numberOfSlides = parseInt(query.slidesNum);
+        this.paneNodes=[];
+        // var startSlide = parseInt(query.startSlide, 10) || 0;
+        var startSlide = parseInt(query.startSlide) || 0;
+        this.swipeOptions = {
+          startSlide: startSlide < this.paneNodes.length && startSlide >= 0 ? startSlide : 0,
+          // auto: parseInt(query.auto, 10) || 0,
+          auto: parseInt(query.auto) || 4000,
+          speed: parseInt(query.speed) || 500,
+          disableScroll: false,
+          continuous: true,
+          slidesPerView : query.slidesPerView === 3,
+         
+          callback(index,element) {
+            // for(element.length<=3;element.length<=9;index++){}
+            console.log('slide changed',element);
+          },
+          transitionEnd() {
+            console.log('ended transition');
+          }
+        };
+      }
   componentDidMount() {
     console.log("0-0-");
       this.willData();
@@ -354,7 +465,7 @@ class WillMovie extends React.Component {
    //获取数据
    willData() {
     console.log("willData");
-    MovieModel.hotmovie(
+    MovieModel.willmovie(
       "",
       data => {
         this.setState({
@@ -371,108 +482,335 @@ class WillMovie extends React.Component {
       }
     );
   }
+  next() {
+    
+      this.reactSwipe.next();
+    }
+  
+    prev() {
+     
+      this.reactSwipe.prev();
+    }
   //列表
   willMovie() {
     let _this = this;
-    let list = this.state.list;
-    console.log(list)
-    return list.map(function(item, index) {
-        return (
-          // <div className="external">
-          <div className="swiper-slide"  style={Styles.indexList} key={item._id}  >
-            <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
-              <div className="list">
-                <div className="" style={{ paddingTop: "0.4rem" }}>
-                  <div
-                    style={{
-                      width:"6rem",
-                      height: "12rem",
-                    }}
-                  >
-                    <img
-                      src={item.imglink}
-                      style={{
-                        width:"6rem",
-                        height: "9rem"
-                      }}
-                      alt=""
-                    />
-                    <span
-                    style={{
-                      height: "0.5rem",
-                      fontSize: "16px"
-                    }}
-                  >{item.title}
+    let list = _this.state.list.slice(0,12);
+   var result = [];
+   for(var i =0,len=list.length;i<len;i+=3){
+     result.push(list.slice(i,i+3))
+   }
+  
+      return result.map(function(item, index) {
+        // for(var i=0;i<=3;i++){
+              console.log(item[0]._id);
+    //  return result[rindex].map(function(item, index) {
+       return(
+        // result[0].map(function(item, index) {
+          <div>
+    <div className="" style={Styles.indexList}  key={item[0]._id}>
+     <Link to={"/Movie/" + item[0]._id} style={{ width:"8rem",height: "15rem" }}>
+               <div
+               style={{
+                 width:"6rem",
+                 height: "12rem",
+               }}
+             >
+               <img
+                 src={item[0].imglink}
+                 style={{
+                   width:"6rem",
+                   height: "9rem"
+                 }}
+                 alt=""
+               />
+               <span
+               style={{
+                 height: "0.5rem",
+                 fontSize: "16px"
+               }}
+             >{item[0].title}
 
-                  </span>
-                    <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >
-                        {item.score}
-                      </span> 
-                      <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >分</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
+             </span>
+               <span style={{ 
+                   height: "0.4rem",
+                   fontSize: "14px",
+                   color: "#FF9933",
+                   }}
+                   >
+                   {item[0].score}
+                 </span> 
+                 <span style={{ 
+                   height: "0.4rem",
+                   fontSize: "14px",
+                   color: "#FF9933",
+                   }}
+                   >分</span>
+               </div>
+               </Link>
+       </div>
+       <div className="" style={Styles.indexList}  key={item[1]._id}>
+       <Link to={"/Movie/" + item[1]._id} style={{ width:"8rem",height: "15rem" }}>
+               
+                 <div
+                 style={{
+                   width:"6rem",
+                   height: "12rem",
+                 }}
+               >
+                 <img
+                   src={item[1].imglink}
+                   style={{
+                     width:"6rem",
+                     height: "9rem"
+                   }}
+                   alt=""
+                 />
+                 <span
+                 style={{
+                   height: "0.5rem",
+                   fontSize: "16px"
+                 }}
+               >{item[1].title}
+  
+               </span>
+                 <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >
+                     {item[1].score}
+                   </span> 
+                   <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >分</span>
+             
+                 </div>
+                 </Link>
+         </div>
+         <div className="" style={Styles.indexList}  key={item[2]._id}>
+       <Link to={"/Movie/" + item[2]._id} style={{ width:"8rem",height: "15rem" }}>
+             
+                 <div
+                 style={{
+                   width:"6rem",
+                   height: "12rem",
+                 }}
+               >
+                 <img
+                   src={item[2].imglink}
+                   style={{
+                     width:"6rem",
+                     height: "9rem"
+                   }}
+                   alt=""
+                 />
+                 <span
+                 style={{
+                   height: "0.5rem",
+                   fontSize: "16px"
+                 }}
+               >{item[2].title}
+  
+               </span>
+                 <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >
+                     {item[2].score}
+                   </span> 
+                   <span style={{ 
+                     height: "0.4rem",
+                     fontSize: "14px",
+                     color: "#FF9933",
+                     }}
+                     >分</span>
        
-        );
-      });
-    }
+                 </div>
+                 </Link>
+         </div>
+         </div>
+        //  )};
+    );
+  // };
+  // });
+// };
+});
+
+// };
+  }
+    // let _this = this;
+    // let list = this.state.list;
+    // console.log(list)
+    // return list.map(function(item, index) {
+    //     return (
+    //       // <div className="external">
+    //       <div className="swiper-slide"  style={Styles.indexList} key={item._id}  >
+    //         <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
+    //           <div className="list">
+    //             <div className="" style={{ paddingTop: "0.4rem" }}>
+    //               <div
+    //                 style={{
+    //                   width:"6rem",
+    //                   height: "12rem",
+    //                 }}
+    //               >
+    //                 <img
+    //                   src={item.imglink}
+    //                   style={{
+    //                     width:"6rem",
+    //                     height: "9rem"
+    //                   }}
+    //                   alt=""
+    //                 />
+    //                 <span
+    //                 style={{
+    //                   height: "0.5rem",
+    //                   fontSize: "16px"
+    //                 }}
+    //               >{item.title}
+
+    //               </span>
+    //                 <span style={{ 
+    //                     height: "0.4rem",
+    //                     fontSize: "14px",
+    //                     color: "#FF9933",
+    //                     }}
+    //                     >
+    //                     {item.score}
+    //                   </span> 
+    //                   <span style={{ 
+    //                     height: "0.4rem",
+    //                     fontSize: "14px",
+    //                     color: "#FF9933",
+    //                     }}
+    //                     >分</span>
+    //               </div>
+    //             </div>
+    //           </div>
+    //         </Link>
+    //       </div>
+       
+    //     );
+    //   });
+    // }
   render() {
     let list = this.state.list;
+
+    // let paneNodes = Array.apply(null, Array(numberOfSlides)).map((_, i) => {
+    //     return (
+    //       <div key={i} style={{display:"inline"}}>
+    //         <div className="item" style={{display:"inline"}}>{i}</div>
+    //         <div className="item"style={{display:"inline"}}>{i}</div>
+    //         <div className="item"style={{display:"inline"}}>{i}</div>
+    //       </div>
     return (
-      <div className="" style={{background: "#fff"}}>
-            <div style={{float:"left"}}>
+       <div className="" style={{background: "#fff"}}>
+            <div style={{float:"left",marginTop:"1rem"}}>
              即将上映:
             </div>
-            <div style={{float:"right",color:"#888888"}}>
-              全部{list.length}>
+            <div style={{float:"left",color:"#888888",marginTop:"1rem"}}>
+            <Link to={"/showDetail/"+ "will"} >
+              全部{list.length}></Link>
               </div>
-                         {/* <div className="content">
-
-  <div className="swiper-container">
-    <div className="swiper-wrapper">
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1n3rZHFXXXXX9XFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i4/TB10rkPGVXXXXXGapXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1kQI3HpXXXXbSXFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-    </div>
-    <div className="swiper-pagination"></div>
-  </div>
-</div> */}
-{/* <div className="content" > */}
-
-  <div className="swiper-container" style={{clear:"both"}} >
-    <div className="swiper-wrapper" >
-    {/* <div className="external"> */}
-    {this.willMovie()}
-    </div> 
-    {/* </div>  */}
-    <div className="swiper-pagination"></div>
-  </div>
-</div>
-  
+              <div style={{float:"right",fontSize:"0.1rem",marginRight:"2rem",marginTop:"1rem"}} >
+          <a className="button button-fill" onClick={this.next}>&gt;</a>
+          </div>
+            <div style={{float:"right",fontSize:"0.1rem",marginRight:"1rem",marginTop:"1rem"}} ><a className="button button-fill" onClick={this.prev}>&lt;
+          </a></div>
+          <div style={{float:"right",fontSize:"1rem",marginRight:"1rem",marginTop:"1rem"}} >
+          <span>/4</span>
+          </div>
+            
+         <div style={{clear:"both"}}>
+         
+        <ReactSwipe ref={reactSwipe => this.reactSwipe = reactSwipe} className="mySwipe" swipeOptions={this.swipeOptions}>
         
+        {this.willMovie()}
+        {/* {Result} */}
+        {/* {this.treeList()} */}
+        
+        </ReactSwipe>
+        </div>
+       
+        <div>
+        {/* <button type="button" onClick={this.prev}>&lt</button>
+        <button type="button" onClick={this.next}>&gt</button> */}
+        </div>
+      </div>
     );
   }
 }
+//     let list = this.state.list;
+//     return (
+//       <div className="" style={{background: "#fff"}}>
+//             <div style={{float:"left"}}>
+//              即将上映:
+//             </div>
+//             <div style={{float:"right",color:"#888888"}}>
+//               全部{list.length}>
+//               </div>
+
+//   <div className="swiper-container" style={{clear:"both"}} >
+//     <div className="swiper-wrapper" >
+//     {this.willMovie()}
+//     </div> 
+//     <div className="swiper-pagination"></div>
+//   </div>
+// </div>
+  
+        
+//     );
+//   }
+// }
 class HotMovie extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      list: [],
-      defaultTop: null,
-    };
-  }
+    this.state = {isToggleOn: true};
+    
+        // 这个绑定是必要的，使`this`在回调中起作用
+        this.next = this.next.bind(this);
+        this.prev = this.prev.bind(this);
+        this.getPos =this.getPos.bind(this);
+        this.state={
+          // list : [0,0,0,0,0,0,0,0,0]
+          list : [0,0,0,0,0,0,0,0,0,0,0,0]
+        }
+        // this.state = {
+        //   list: [],
+        //   defaultTop: null,
+        // };
+        var query = querystring.parse(window.location.search.slice(12));
+        // var numberOfSlides = parseInt(query.slidesNum, 10) || 20;
+        var numberOfSlides = parseInt(query.slidesNum);
+        this.paneNodes=[];
+        // var startSlide = parseInt(query.startSlide, 10) || 0;
+        var startSlide = parseInt(query.startSlide) || 0;
+        this.swipeOptions = {
+          startSlide: startSlide < this.paneNodes.length && startSlide >= 0 ? startSlide : 0,
+          // auto: parseInt(query.auto, 10) || 0,
+          auto: parseInt(query.auto) || 4000,
+          speed: parseInt(query.speed) || 500,
+          // disableScroll: query.disableScroll === 'false',
+          disableScroll: false,
+          continuous:true,
+          // continuous: query.continuous === 'true',
+          // slidesPerView : query.slidesPerView === 3,
+         
+          callback(index,element) {
+            // for(element.length<=3;element.length<=9;index++){}
+            console.log('slide changed',index);
+          },
+          transitionEnd() {
+            console.log('ended transition');
+          }
+        };
+      }
   componentDidMount() {
     console.log("0-0-");
       this.hotData();
@@ -499,86 +837,295 @@ class HotMovie extends React.Component {
       }
     );
   }
+
+  next() {
+    
+      this.reactSwipe.next();
+    }
+  
+    prev() {
+      this.reactSwipe.prev();
+    }
+    getPos(){
+      this.reactSwipe.getPos();
+      console.log(this.reactSwipe.getPos())
+    }
+  
   //列表
   
  
   hotMovie() {
     let _this = this;
-    let list = this.state.list;
-    console.log(list)
-    return list.map(function(item, index) {
-        return (
-          <div className="swiper-slide" style={Styles.indexList} key={item._id} >
-            <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
-              <div className="list">
-                <div className="" style={{ paddingTop: "0.4rem" }}>
+    let r = _this.state.index;
+    console.log(r)
+    let rest= _this.state.list.length % 3;
+    console.log(rest)
+    let int = _this.state.list.length - rest;
+    console.log(int)
+    let list = _this.state.list.slice(0,12);
+    var result = [];
+    for(var i =0,len=list.length;i<len;i+=3){
+      result.push(list.slice(i,i+3))
+    }
+   
+       return result.map(function(item, index) {
+         // for(var i=0;i<=3;i++){
+               console.log(item[0]._id);
+     //  return result[rindex].map(function(item, index) {
+        return(
+         // result[0].map(function(item, index) {
+           <div>
+     <div className="" style={Styles.indexList}  key={item[0]._id}>
+      <Link to={"/Movie/" + item[0]._id} style={{ width:"8rem",height: "15rem" }}>
+                <div
+                style={{
+                  width:"6rem",
+                  height: "12rem",
+                }}
+              >
+                <img
+                  src={item[0].imglink}
+                  style={{
+                    width:"6rem",
+                    height: "9rem"
+                  }}
+                  alt=""
+                />
+                <span
+                style={{
+                  height: "0.5rem",
+                  fontSize: "16px"
+                }}
+              >{item[0].title}
+ 
+              </span>
+                <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >
+                    {item[0].score}
+                  </span> 
+                  <span style={{ 
+                    height: "0.4rem",
+                    fontSize: "14px",
+                    color: "#FF9933",
+                    }}
+                    >分</span>
+                </div>
+                </Link>
+        </div>
+        <div className="" style={Styles.indexList}  key={item[1]._id}>
+        <Link to={"/Movie/" + item[1]._id} style={{ width:"8rem",height: "15rem" }}>
+                
                   <div
+                  style={{
+                    width:"6rem",
+                    height: "12rem",
+                  }}
+                >
+                  <img
+                    src={item[1].imglink}
                     style={{
                       width:"6rem",
-                      height: "12rem",
+                      height: "9rem"
                     }}
-                  >
-                    <img
-                      src={item.imglink}
-                      style={{
-                        width:"6rem",
-                        height: "9rem"
+                    alt=""
+                  />
+                  <span
+                  style={{
+                    height: "0.5rem",
+                    fontSize: "16px"
+                  }}
+                >{item[1].title}
+   
+                </span>
+                  <span style={{ 
+                      height: "0.4rem",
+                      fontSize: "14px",
+                      color: "#FF9933",
                       }}
-                      alt=""
-                    />
-                    <span
-                    style={{
-                      height: "0.5rem",
-                      fontSize: "16px"
-                    }}
-                  >{item.title}
-
-                  </span>
+                      >
+                      {item[1].score}
+                    </span> 
                     <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >
-                        {item.score}
-                      </span> 
-                      <span style={{ 
-                        height: "0.4rem",
-                        fontSize: "14px",
-                        color: "#FF9933",
-                        }}
-                        >分</span>
+                      height: "0.4rem",
+                      fontSize: "14px",
+                      color: "#FF9933",
+                      }}
+                      >分</span>
+              
                   </div>
-                </div>
-              </div>
-            </Link>
+                  </Link>
           </div>
-        );
-      });
-    }
-  render() {
+          <div className="" style={Styles.indexList}  key={item[2]._id}>
+        <Link to={"/Movie/" + item[2]._id} style={{ width:"8rem",height: "15rem" }}>
+              
+                  <div
+                  style={{
+                    width:"6rem",
+                    height: "12rem",
+                  }}
+                >
+                  <img
+                    src={item[2].imglink}
+                    style={{
+                      width:"6rem",
+                      height: "9rem"
+                    }}
+                    alt=""
+                  />
+                  <span
+                  style={{
+                    height: "0.5rem",
+                    fontSize: "16px"
+                  }}
+                >{item[2].title}
+   
+                </span>
+                  <span style={{ 
+                      height: "0.4rem",
+                      fontSize: "14px",
+                      color: "#FF9933",
+                      }}
+                      >
+                      {item[2].score}
+                    </span> 
+                    <span style={{ 
+                      height: "0.4rem",
+                      fontSize: "14px",
+                      color: "#FF9933",
+                      }}
+                      >分</span>
+        
+                  </div>
+                  </Link>
+          </div>
+          </div>
+      
+     );
+   
+ });
+ 
+   }
+  
+   render() {
     let list = this.state.list;
-    return (
-      <div className="" style={{background: "#fff"}}>
-            <div style={{float:"left"}}>
-             热门电影:
-            </div>
-            <div style={{float:"right",color:"#888888"}}>
-              <a>全部{list.length}></a>
-              </div>
+     return (
+        <div className="" style={{background: "#fff"}}>
+             <div style={{float:"left",marginTop:"1rem"}}>
+              热门电影:
+             </div>
+             <div style={{float:"left",color:"#888888",marginTop:"1rem"}}>
+             <Link to={"/showDetail/"+ "hot"} >
+               全部{list.length}></Link>
+               </div>
+
+               <div style={{float:"right",fontSize:"0.1rem",marginRight:"2rem",marginTop:"1rem"}} >
+           <a className="button button-fill" onClick={this.next}>&gt;</a>
+           </div>
+             <div style={{float:"right",fontSize:"0.1rem",marginRight:"1rem",marginTop:"1rem"}} ><a className="button button-fill" onClick={this.prev}>&lt;
+           </a></div>
+           <div style={{float:"right",fontSize:"1rem",marginRight:"1rem",marginTop:"1rem"}} >
+           <span>{this.getPos}/4</span>
+           </div>
+             
+          <div style={{clear:"both"}}>
+          
+         <ReactSwipe ref={reactSwipe => this.reactSwipe = reactSwipe} className="mySwipe" swipeOptions={this.swipeOptions}>
+         
+         {this.hotMovie()}
+         {/* {Result} */}
+         {/* {this.treeList()} */}
+         
+         </ReactSwipe>
+         </div>
+        
+         <div>
+         {/* <button type="button" onClick={this.prev}>&lt</button>
+         <button type="button" onClick={this.next}>&gt</button> */}
+         </div>
+       </div>
+     );
+   }
+ }
+//     let _this = this;
+//     let list = this.state.list;
+//     console.log(list)
+//     return list.map(function(item, index) {
+//         return (
+//           <div className="swiper-slide" style={Styles.indexList} key={item._id} >
+//             <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
+//               <div className="list">
+//                 <div className="" style={{ paddingTop: "0.4rem" }}>
+//                   <div
+//                     style={{
+//                       width:"6rem",
+//                       height: "12rem",
+//                     }}
+//                   >
+//                     <img
+//                       src={item.imglink}
+//                       style={{
+//                         width:"6rem",
+//                         height: "9rem"
+//                       }}
+//                       alt=""
+//                     />
+//                     <span
+//                     style={{
+//                       height: "0.5rem",
+//                       fontSize: "16px"
+//                     }}
+//                   >{item.title}
+
+//                   </span>
+//                     <span style={{ 
+//                         height: "0.4rem",
+//                         fontSize: "14px",
+//                         color: "#FF9933",
+//                         }}
+//                         >
+//                         {item.score}
+//                       </span> 
+//                       <span style={{ 
+//                         height: "0.4rem",
+//                         fontSize: "14px",
+//                         color: "#FF9933",
+//                         }}
+//                         >分</span>
+//                   </div>
+//                 </div>
+//               </div>
+//             </Link>
+//           </div>
+//         );
+//       });
+//     }
+//   render() {
+//     let list = this.state.list;
+//     return (
+//       <div className="" style={{background: "#fff"}}>
+//             <div style={{float:"left"}}>
+//              热门电影:
+//             </div>
+//             <div style={{float:"right",color:"#888888"}}>
+//               <a>全部{list.length}></a>
+//               </div>
            
-      {/* <div className="content" > */}
-      <div className="swiper-container" style={{clear:"both"}} >
-        <div className="swiper-wrapper" >
-        {this.hotMovie()}
-        </div>
-        <div className="swiper-pagination"></div>
-      </div>
-    </div>
-            // </div> 
-    );
-  }
-}
+//       {/* <div className="content" > */}
+//       <div className="swiper-container" style={{clear:"both"}} >
+//         <div className="swiper-wrapper" >
+//         {this.hotMovie()}
+//         </div>
+//         <div className="swiper-pagination"></div>
+//       </div>
+//     </div>
+//             // </div> 
+//     );
+//   }
+// }
 
 class Home extends React.Component {
   constructor(props) {
@@ -895,13 +1442,14 @@ class Home extends React.Component {
   }
   render() {
     return (
-      <div data-log="log">
+      <div data-log="log" >
+          <main className="page page-current">
+
         <div 
             style={{position: "absolute", height: "50px", width: "100%", top: "0px", zIndex: '2001'}}>{header()}</div>
-        {/* <main className="page page-current"> */}
-
+      
         
-          <div className="outerScroller" id="outerScroller" ref="outerScroller" >
+          <div className="outerScroller" id="outerScroller" ref="outerScroller"   >
             <div
               className="pullToRefreshBox"
               id="pullToRefreshBox"
@@ -914,12 +1462,7 @@ class Home extends React.Component {
                 ref="pullToRefreshArrow"
               />
             </div>
-            <a
-              className="tab-item open-panel pull-left"
-              data-panel="#panel-left-demo"
-            >
-              {/* <span className="icon icon-me" /> */}
-            </a>
+    
             <SearchBar 
             filterText={this.state.filterText}
             />
@@ -976,7 +1519,7 @@ class Home extends React.Component {
   </div>
 </div> */}
           </div>
-        {/* </main> */}
+        </main>
         <div className="panel-overlay" />
         <div
           className="panel panel-left panel-reveal theme-dark"

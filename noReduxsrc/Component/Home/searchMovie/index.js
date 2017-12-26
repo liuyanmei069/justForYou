@@ -1,9 +1,10 @@
-import React from "react";
+// import React from "react";
 import { Link } from "react-router-dom";
 import { UserModel, ArticleModel,MovieModel } from "../../dataModel";
 import "../../../static/css/style.css";
 import Me from "../../Me";
 // import SearchBar from "../";
+import React, { Component } from 'react';
 
 import { dateDiff } from "../../../Tools";
 let Styles = {
@@ -535,14 +536,6 @@ searchResult() {
             {this.searchResult()}
             </ul>
             <div className="content">
-  {/* <div className="swiper-container" data-space-between='10'>
-    <div className="swiper-wrapper">
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1n3rZHFXXXXX9XFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i4/TB10rkPGVXXXXXGapXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-      <div className="swiper-slide"><img src="//gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i1/TB1kQI3HpXXXXbSXFXXXXXXXXXX_!!0-item_pic.jpg_320x320q60.jpg" alt=""/></div>
-    </div>
-    <div className="swiper-pagination"></div>
-  </div> */}
 </div>
           </div>
         </main>
@@ -559,14 +552,5 @@ searchResult() {
     );
   }
 
-
-    newFunction() {
-        // var outerScroller = document.getElementById('outerScroller');
-        this.fetchData();
-    }
-    newFunction() {
-        // var outerScroller = document.getElementById('outerScroller');
-        this.fetchData();
-    }
 }
 export default searchMovie;

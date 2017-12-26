@@ -23,11 +23,15 @@ class Discussion extends React.Component {
   }
 
   componentDidMount() {
-    // let movie_id = this.props.match.params.id;
-    let discussion_id = this.props.match.params.id;
+    let movie_id = this.props.match.params.movieid;
+    let discussion_id = this.props.match.params.discussionid;
+    let params={
+      movie_id :movie_id,
+      discussion_id:discussion_id
+    }
     console.log(discussion_id);
     
-    MovieModel.fetchDiscuss(discussion_id, (data) => {
+    MovieModel.fetchDiscuss(movie_id,discussion_id, (data) => {
       this.setState({
         discussMovie:data.content,   
         // title: data.content,
@@ -58,7 +62,7 @@ class Discussion extends React.Component {
           </div>
           <div className="col-85 commentList">
             <div style={{fontWeight: 'bold', fontSize: '15px'}}>{item.username}</div>
-            <p style={{margin: '0.2rem 0', fontSize: '14px'}}>{item.dcomment}</p>
+            <p style={{margin: '0.2rem 0', fontSize: '14px'}}>{item.comment}</p>
             <div style={{fontSize: '12px'}}><span className="icon icon-clock"> </span> {dateDiff(item.createAt)}</div>
           </div>
         </li>
@@ -86,12 +90,15 @@ class Discussion extends React.Component {
       $.toast('评论不能为空');
       return;
     }
-    let movieId = this.props.match.params.id;
+    // let movieId = this.props.match.params.id;
+    let movie_id = this.props.match.params.movieid;
+    let discussion_id = this.props.match.params.discussionid;
     let userId = UserModel.fetchToken();
     if (userId) {
       let params = {
+        movie_id :movie_id,
+        discussion_id:discussion_id,
         userId: userId,
-        movieId: movieId,
         dcomment: dcomment
       }
       MovieModel.dcomment(params, (data) => {

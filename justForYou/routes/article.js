@@ -4,6 +4,7 @@ var router = express.Router();
 
 router.post('/pulish',function (req,res) {
     var info = req.body;
+    console.log("------------",info);
     if(info.article){
         Model('Article').update({_id:info.article},{$set:{title:info.title,content:info.content}},function (err,result) {
             if(err){
@@ -15,6 +16,7 @@ router.post('/pulish',function (req,res) {
     }else{
         info.createAt = Date.now();
         info.user = info.token;
+        console.log('nnnnnnnnnnnnnnn',info.user)
         delete info.token;
         Model('User').findById(info.user,function (err,doc) {
             if(err){
@@ -43,6 +45,7 @@ router.get('/fetchList',function (req,res) {
     Model('Article').find().sort(orderObj).populate('user').exec(function (err,docs) {
         var acticleList=[];
         docs.forEach(function (item) {
+            console.log("****************",item)
             acticleList.push({
                 title:item.title,
                 content:item.content,
@@ -85,6 +88,8 @@ router.get('/fetchArticle/:id',function (req,res) {
                         author:{_id:doc.user._id,avatar:doc.user.avatar,username:doc.user.username},
                         comments:commentsList
                     }
+                    console.log('qqq',doc);
+                    console.log('eeeee',article);
                 res.send({id:1,content:article})
             }
         }
@@ -129,6 +134,7 @@ router.post('/comment',function (req,res) {
     var info = req.body;
     var articleId=info.articleId;
     var userId = info.userId;
+    console.log('fffffffffffff',userId);
     var comment = info.comment;
     var createAt = Date.now();
     Model('Article').update({_id:articleId},{

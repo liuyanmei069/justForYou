@@ -56,9 +56,13 @@ router.post('/uploadAvatar', function (req, res) {
   var form = new formidable.IncomingForm();
   form.parse(req, function (err, fields, files) {
     console.log(files)
-    var avatarPath = './upload/' + fields.token + files.avatar.name
-    console.log(avatarPath);
-    console.log(files.avatar.path)
+    // var avatarPath = './upload/' + fields.token + files.avatar.name
+    var avatarPath = './upload/' + files.avatar.name
+    console.log("llllllllllllll",avatarPath);
+    console.log("oooooooooo",fields.token);
+    console.log("nnnnnnn",files.avatar.name);
+
+    console.log("mmmmmmmmm",files.avatar.path)
     fs.createReadStream(files.avatar.path).pipe(fs.createWriteStream(avatarPath));
     avatarPath = avatarPath.substring(1);
     Model('User').update({_id: fields.token}, {$set: {avatar: API + avatarPath}}, function (err, doc) {
@@ -68,6 +72,7 @@ router.post('/uploadAvatar', function (req, res) {
         if (doc) {
           res.send({title: 1, content: '修改成功'})
         }
+        console.log()
       }
     })
 
