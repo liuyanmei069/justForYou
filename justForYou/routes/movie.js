@@ -482,6 +482,8 @@ router.post("/movieList", function(req, res) {
                     //     })
                     // })
                     var discussion = doc.discussion.id(discussion_id);
+                    var mtitle = doc.title;
+                    var discussNum = doc.discussion.length;
                     // console.log("ddddd",discussion);
                     var dcomments = discussion.dcomments;
                     // console.log('6969696969',dcomments)
@@ -499,7 +501,8 @@ router.post("/movieList", function(req, res) {
                     
                     // console.log("!!!!!!!!!!!!",dcommentsList);
                         discussMovie = ({
-                            
+                           mtitle:mtitle,
+                           discussNum:discussNum, 
                             title:discussion.title,
                             dcontent:discussion.dcontent,
                             createAt:discussion.createAt,
@@ -520,6 +523,129 @@ router.post("/movieList", function(req, res) {
         })
 // console.log('11111',doc);
 
+    })
+
+    // router.get('/hotDiscuss',function (req,res) {
+    //     var movie_id=req.params.id;
+    //     var movie = [];
+    //     var orderBy = 'discussion.createAt';
+    //     var order = -1;
+    //     var orderObj = {};
+    //     orderObj[orderBy] = order;
+    //     Model('Movie').find().sort(orderObj).populate('user').populate('discussion.user').populate('comments.user').exec(function (err,doc) {
+    //         doc.forEach(function (item) {
+    //             console.log("****************",item)
+    //             movie.push({
+    //                 imglink:item.imglink,
+    //                 imdbLink:doc.imdbLink,
+    //                 comments:item.comments,
+    //                 _id:item._id,
+    //                 discussion:item.discussion,
+    //             })
+    //         })
+    //         res.send(movie)
+    //         console.log("eeeeeeee",movie)
+    //     })
+    // })
+    router.get('/hotDiscuss',function (req,res) {
+        var movie_id=req.params.id;
+        var movie = [];
+        var orderBy = 'discussion.dcomments.length';
+        var order = -1;
+        var orderObj = {};
+        var discussList = [];
+        orderObj[orderBy] = order;
+        Model('Movie').find().sort(orderObj).populate('user').populate('discussion.user').populate('comments.user').exec(function (err,doc) {
+            doc.forEach(function (items) {
+                // console.log("****************",items)
+                // console.log("0000000000",items)   
+                //     var comments = items.comments;
+                //     // console.log("#######",comments);
+                //     var commentsList = [];
+                if(items.discussion.length>0){
+                  
+                    // var discussion =items.discussion;
+                   
+                //     comments.forEach(function (item) {
+                //         console.log()
+                //         commentsList.push({
+                //             username:item.user.username,
+                //             userId:item.user._id,
+                //             avatar:item.user.avatar,
+                //             createAt:item.createAt,
+                //             comment:item.content,
+                //             createAt:item.createAt,
+                //         })
+                //     })
+                //     var sortComments = commentsList.reverse()
+                //     // console.log("asdasfdsv",sortComments)
+               
+                //     var sortDiscuss = discussList.reverse()
+                // console.log("0000000000",discussList)   
+                        // movie = ({
+                        //     title:items.title,
+                        //     years:items.years,
+                        //     director:items.director,
+                        //     actor:items.actor,
+                        //     style:items.style,
+                        //     country:items.country,
+                        //     showtime:items.showtime,
+                        //     movietime:items.movietime,
+                        //     imglink:items.imglink,
+                        //     imdb:items.imdb,
+                        //     score:items.score,
+                        //     description:items.description,
+                        //     comments:items.comments,
+                        //     _id:items._id,
+                        //     imdbLink:items.imdbLink,
+                        //     discussion:items.discussion,
+                        // })
+                        var mtitle = items.title;
+                        var imglink = items.imglink;
+                        var discussion =items.discussion;
+                        var m_id = items._id;
+                        // console.log("66666666",movie)
+                        // console.log("11111111",movie.title)
+                   
+                      
+                        discussion.forEach(function (item) {
+                            discussList.push({
+                                mtitle:mtitle,
+                                imglink:imglink,
+                                m_id:m_id,
+                                title:item.title,
+                                dcontent:item.dcontent,
+                                createAt:item.createAt,
+                                author:{_id:item.user._id,avatar:item.user.avatar,username:item.user.username},
+                                pv:item.pv,
+                                star:item.star,
+                                _id:item._id,
+                                dcommentNum:item.dcomments.length,
+                                createAt:item.createAt,
+                                
+                            })
+                
+                        })
+                        // console.log("33333",discussList)
+                    }
+                    
+                      
+                    })    
+                   
+                    var hotdis = function(a,b){
+                        return b.dcommentNum - a.dcommentNum
+                    //    if(a.dcommentNum<b.dcommentNum){
+                    //        return 1;
+                    //    }else if (a.dcommentNum>b.dcommentNum){
+                    //        return -1;
+                    //    }
+                    //    return 0;
+                   };
+                   var hotdiscuss =discussList.sort(hotdis)
+                    res.send(hotdiscuss)
+                    
+              
+        })
     })
 
 
@@ -644,398 +770,7 @@ router.post("/movieList", function(req, res) {
         // Model('Movie').save(callback)
         
     });
-    // router.get('/discussion',function (req,res) {
-    //     var movie_id=req.params.id;
-    //     var discussion={};
-    // Model('Movie').findById(movie_id).populate('user').populate('discussion.user').populate('discussion.dcomments.user').exec(function (err,doc) {
-    //     if(err){
-    //         res.send(err)
-    //     }else{
-    //         if(doc){
-    //             var dcomments = doc.dcomments;
-    //             var dcommentsList = [];
-    //             dcomments.forEach(function (item) {
-    //                 dcommentsList.push({
-    //                     username:item.user.username,
-    //                     userId:item.user._id,
-    //                     avatar:item.user.avatar,
-    //                     createAt:item.createAt,
-    //                     dcomment:item.content,
-    //                 })
-    //             })
-    //                 discussion = {
-    //                     title:doc.title,
-    //                     content:doc.content,
-    //                     createAt:doc.createAt,
-    //                     pv : doc.pv,
-    //                     article_id:doc._id,
-    //                     author:{_id:doc.user._id,avatar:doc.user.avatar,username:doc.user.username},
-    //                     dcomments:commentsList
-    //                 }
-    //             res.send({id:1,content:discussion})
-    //         }
-    //     }
-    // })
-// router.get('/allType',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find(function (err,docs) {
-//         var allType=[];
-//         docs.forEach(function (item) {
-//             allType.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(allType)
-//     })
-// })
-// router.get('/love',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/爱情/},function (err,docs) {
-//         var love=[]
-//         docs.forEach(function (item) {
-//             love.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(love)
-//     })
-// })
-// router.get('/comedy',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/喜剧/},function (err,docs) {
-//         var comedy=[]
-//         docs.forEach(function (item) {
-//             comedy.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(comedy)
-//     })
-// })
 
-// router.get('/action',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/动作/},function (err,docs) {
-//         var action=[]
-//         docs.forEach(function (item) {
-//             action.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(action)
-//     })
-// })
-
-// router.get('/story',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/剧情/},function (err,docs) {
-//         var story=[]
-//         docs.forEach(function (item) {
-//             story.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(story)
-//     })
-// })
-
-
-// router.get('/science',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/科幻/},function (err,docs) {
-//         var science=[]
-//         docs.forEach(function (item) {
-//             science.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(science)
-//     })
-// })
-
-// router.get('/terror',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/恐怖/},function (err,docs) {
-//         var terror=[]
-//         docs.forEach(function (item) {
-//             terror.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(terror)
-//     })
-// })
-
-// router.get('/cartoon',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/动画/},function (err,docs) {
-//         var cartoon=[]
-//         docs.forEach(function (item) {
-//             cartoon.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(cartoon)
-//     })
-// })
-
-// router.get('/thriller',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/惊悚/},function (err,docs) {
-//         var thriller=[]
-//         docs.forEach(function (item) {
-//             thriller.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(thriller)
-//     })
-// })
-
-// router.get('/crime',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/犯罪/},function (err,docs) {
-//         var crime=[]
-//         docs.forEach(function (item) {
-//             crime.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(crime)
-//     })
-// })
-// router.get('/mainland',function (req,res) {
-//     var movie = req.body;
-//     var orderBy = 'showtime';
-//     var order = -1;
-//     var orderObj = {};
-//     orderObj[orderBy] = order;
-//     Model('Movie').find({'style':/科幻/},function (err,docs) {
-//         var mainland=[]
-//         docs.forEach(function (item) {
-//             mainland.push({
-//                 title:item.title,
-//                 years:item.years,
-//                 director:item.director,
-//                 actor:item.actor,
-//                 style:item.style,
-//                 country:item.country,
-//                 showtime:item.showtime,
-//                 movietime:item.movietime,
-//                 imglink:item.imglink,
-//                 imdb:item.imdb,
-//                 imdbLink:item.imdbLink,
-//                 score:item.score,
-//                 descript:item.descript,
-//                 _id:item._id,
-//                 pv:item.pv,
-//                 star:item.star,
-//                 commentNum:item.comments.length,
-//             })
-//         })
-//         res.send(mainland)
-//     })
-// })
 
 
 module.exports = router;

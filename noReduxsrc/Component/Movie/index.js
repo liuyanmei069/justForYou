@@ -4,12 +4,16 @@ import { UserModel,MovieModel } from "../dataModel";
 import "../../static/css/style.css";
 import Me from "../Me";
 
-import React, { Component } from 'react';
+import React, { Component,PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import querystring from 'querystring';
 import ReactSwipe from 'react-swipe';
 // import  './index.css';
 import { dateDiff } from "../../Tools";
+import  './swiper-4.1.0.min.css';
+import Swiper from 'react-swiper'
+
+let startX;
 
 let Styles = {
   index:{
@@ -73,13 +77,15 @@ let header = () => {
   }
 
 class Style extends React.Component{
+  static propTypes = {
+    doctorSchedules: PropTypes.array,
+  }
+
   constructor(props) {
     super(props); 
-        console.log(props);
-        // this.state={
-        //   currentIndex:false,
-        // };
-        this.state = {isToggleOn: true};
+        this.state = {isToggleOn: true,
+          touchIndex: 0, // 当前未隐藏div索引值
+        };
 
     // 这个绑定是必要的，使`this`在回调中起作用
     this.next = this.next.bind(this);
@@ -113,9 +119,60 @@ class Style extends React.Component{
   } 
 
   componentDidMount() {
+    new Swiper(this.refs.banner,{
+      direction: 'horizontal',
+      loop: false,
+      pagination: {el:'.swiper-pagination',
+    },
+    paginationClickable:true,
+    uniqueNavElements:true,
+      slidesPerView : 5,
+      spaceBetween : 5,
+    })
         console.log("0-0-");
         console.log("0909");
       }
+
+      componentWillReceiveProps() {
+      }
+    
+
+
+      
+      touchStart(event) {
+        startX = event.changedTouches[0].pageX;
+      }
+    
+      // 因为无论move 还是start 都会触发end事件。所以判断方向就在end事件中
+      touchEnd(event, index) {
+        event.preventDefault();
+        const endX = event.changedTouches[0].pageX;
+        if (endX - startX > 20) {
+          // alert('点击左');
+          this.clickLeft(index);
+        } else if (startX - endX > 20) {
+          // alert('点击右');
+          this.clickRight(index);
+        }
+      }
+    
+      clickLeft(indexParam) {
+        const allItemCounts = 1; // 总共轮播个数
+        const index = indexParam || this.state.touchIndex;
+        console.log(index);
+        this.setState({
+          touchIndex: index === 0 ? allItemCounts : index - 1,
+        });
+      }
+    
+      clickRight() {
+        const allItemCounts = 1; // 总共轮播个数
+        const index = this.state.touchIndex;
+        this.setState({
+          touchIndex: index === allItemCounts ? 0 : index + 1,
+        });
+      }
+
 
   onClickStyle(e,key){
     this.setState({
@@ -151,6 +208,7 @@ class Style extends React.Component{
   }
 
   render() {
+    const {touchIndex} = this.state;
     const style = this.props.style;
     console.log(style);
 
@@ -166,54 +224,64 @@ class Style extends React.Component{
     var clickStyle9 = style==='惊悚'?  Styles.Select : Styles.listStyle;
     var clickStyle10 = style==='犯罪'?  Styles.Select : Styles.listStyle;
     return ( 
-      
+    
       <li type="checkbox">
-      <span className="" style={Styles.titleName}>类型：</span>
-      <div style={{float:"left",fontSize:"0.1rem",marginRight:"",marginTop:"0.3rem", color: "#999999"}} ><a className="" onClick={this.prev}>&lt;
+      <span className="" style={Styles.titleName}  onClick={() => this.clickLeft()}>类型：</span>
+      {/* <div style={{float:"left",fontSize:"0.1rem",marginRight:"",marginTop:"0.3rem", color: "#999999"}} ><a className="" onClick={this.prev}>&lt;
           </a></div>
           <div style={{float:"right",fontSize:"0.1rem",marginRight:"",marginTop:"0.3rem",color: "#999999"}} >
           <a className="" onClick={this.next}>&gt;</a>
-          </div> 
+          </div>  */}
           
            {/* <swipeLeft onClick={this.prev}></swipeLeft>
            <swipeRight onClick={this.next}></swipeRight> */}
-      <ReactSwipe  ref={reactSwipe => this.reactSwipe = reactSwipe} className="mySwipe" swipeOptions={this.swipeOptions}>
-      <div >
-      <a onClick={
+      {/* <ReactSwipe  ref={reactSwipe => this.reactSwipe = reactSwipe} className="mySwipe" swipeOptions={this.swipeOptions}> */}
+      {/* <div className="swiper-container">
+      <div className="swiper-wrapper" > */}
+     
+        <div onTouchStart={this.touchStart.bind(this)}
+            onTouchEnd={(event) => this.touchEnd(event, 0)}
+            style={{display: touchIndex === 0 ? 'block' : 'none'}}>
+      <a  onClick={
         this.handleStyle.bind(this,'','')
-      } className="tab-link active" type="radio" name="tag" value="" style={clickStyle1} >全部</a>
+      } className="swiper-slide tab-link active" type="radio" name="tag" value="" style={clickStyle1} >全部</a>
       <a  onClick={(e) => {
                 this.handleStyle(e,'爱情')
-              }}className="tab-link" type="radio" name="tag" value="'爱情" style={clickStyle2}>爱情</a>
+              }}className="swiper-slide tab-link" type="radio" name="tag" value="'爱情" style={clickStyle2}>爱情</a>
       <a onClick={(e) => {
                 this.handleStyle(e,'喜剧')
-              }} className="tab-link" type="radio" name="tag" value="喜剧" style={clickStyle3}>喜剧</a>
+              }} className="swiper-slide tab-link" type="radio" name="tag" value="喜剧" style={clickStyle3}>喜剧</a>
       <a onClick={(e) => {
                 this.handleStyle(e,'动作')
-              }} className="tab-link" type="radio" name="tag" value="'动作" style={clickStyle4}>动作</a>
+              }} className="swiper-slide tab-link" type="radio" name="tag" value="'动作" style={clickStyle4}>动作</a>
       <a onClick={(e) => {
                 this.handleStyle(e,'剧情')
-              }} type="radio" className="tab-link" name="tag" value="剧情" style={clickStyle5}>剧情</a>
-
-      </div>
-      <div >        
+              }} type="radio" className="swiper-slide tab-link" name="tag" value="剧情" style={clickStyle5}>剧情</a>        
+     </div>
+     <div onTouchStart={this.touchStart.bind(this)}
+            onTouchEnd={(event) => this.touchEnd(event, 1)}
+            style={{display: touchIndex === 1 ? 'block' : 'none'}}>
       <a onClick={(e) => {
                 this.handleStyle(e,"科幻")
-              }} type="radio" className="tab-link" name="tag" value="科幻" style={clickStyle6}>科幻</a>
+              }} type="radio" className="swiper-slide tab-link" name="tag" value="科幻" style={clickStyle6}>科幻</a>
+      
+      
       <a onClick={(e) => {
                 this.handleStyle(e,"恐怖")
-              }} type="radio" className="tab-link" name="tag" value="恐怖" style={clickStyle7}>恐怖</a>
+              }} type="radio" className="swiper-slide tab-link" name="tag" value="恐怖" style={clickStyle7}>恐怖</a>
       <a onClick={(e) => {
                 this.handleStyle(e,"动画")
-              }} type="radio" className="tab-link" name="tag" value="/动画/" style={clickStyle8}>动画</a>
+              }} type="radio" className="swiper-slide tab-link" name="tag" value="/动画/" style={clickStyle8}>动画</a>
       <a onClick={(e) => {
                 this.handleStyle(e,"惊悚")
-              }} type="radio" className="tab-link" name="tag" value="/惊悚/" style={clickStyle9}>惊悚</a>
+              }} type="radio" className="swiper-slide tab-link" name="tag" value="/惊悚/" style={clickStyle9}>惊悚</a>
       <a onClick={(e) => {
                 this.handleStyle(e,"犯罪")
-              }} type="radio" className="tab-link" name="tag" value="/犯罪/" style={clickStyle10}>犯罪</a>
-              </div>
-              </ReactSwipe>
+              }} type="radio" className="swiper-slide tab-link" name="tag" value="/犯罪/" style={clickStyle10}>犯罪</a>
+              </div> 
+    {/* <div className="swiper-pagination"></div> */}
+  {/* </div> */}
+              {/* </ReactSwipe> */}
            
       </li>
       
@@ -221,9 +289,16 @@ class Style extends React.Component{
   }
 }
 class Country extends React.Component{
+  static propTypes = {
+    doctorSchedules: PropTypes.array,
+  }
+
   constructor(props) {
     super(props); 
-        console.log(props);
+        this.state = {isToggleOn: true,
+          touchIndex: 0, // 当前未隐藏div索引值
+        };
+
         this.handleCountry=this.handleCountry.bind(this);
   }
   
@@ -237,10 +312,50 @@ class Country extends React.Component{
         console.log("0-0-");
         console.log("0909");
       }
+      componentWillReceiveProps() {
+      }
+    
+
+
+      
+      touchStart(event) {
+        startX = event.changedTouches[0].pageX;
+      }
+    
+      // 因为无论move 还是start 都会触发end事件。所以判断方向就在end事件中
+      touchEnd(event, index) {
+        event.preventDefault();
+        const endX = event.changedTouches[0].pageX;
+        if (endX - startX > 20) {
+          // alert('点击左');
+          this.clickLeft(index);
+        } else if (startX - endX > 20) {
+          // alert('点击右');
+          this.clickRight(index);
+        }
+      }
+    
+      clickLeft(indexParam) {
+        const allItemCounts = 1; // 总共轮播个数
+        const index = indexParam || this.state.touchIndex;
+        console.log(index);
+        this.setState({
+          touchIndex: index === 0 ? allItemCounts : index - 1,
+        });
+      }
+    
+      clickRight() {
+        const allItemCounts = 1; // 总共轮播个数
+        const index = this.state.touchIndex;
+        this.setState({
+          touchIndex: index === allItemCounts ? 0 : index + 1,
+        });
+      }
 
 
 
   render() {
+    const {touchIndex} = this.state;
     const country = this.props.country;
     console.log(country);
     var clickCountry1 = country===''?  Styles.Select : Styles.listStyle;
@@ -255,7 +370,11 @@ class Country extends React.Component{
     var clickCountry10 = country==='印度'?  Styles.Select : Styles.listStyle;
     return (  
       <li type="checkbox">
-      <span className="" style={Styles.titleName}>地区：</span>
+      <span className="" style={Styles.titleName} onClick={() => this.clickLeft()}>地区：</span>
+     
+        <div onTouchStart={this.touchStart.bind(this)}
+            onTouchEnd={(event) => this.touchEnd(event, 0)}
+            style={{display: touchIndex === 0 ? 'block' : 'none'}}>
       <a onClick={
         this.handleCountry.bind(this,'','')
       } type="radio" name="tag" value="全部" style={clickCountry1}>全部</a>
@@ -271,6 +390,11 @@ class Country extends React.Component{
       <a onClick={(e) => {
                 this.handleCountry(e,'台湾')
               }} type="radio" name="tag" value="台湾" style={clickCountry5}>台湾</a>
+     
+     </div>
+     <div onTouchStart={this.touchStart.bind(this)}
+            onTouchEnd={(event) => this.touchEnd(event, 1)}
+            style={{display: touchIndex === 1 ? 'block' : 'none'}}>
       <a onClick={(e) => {
                 this.handleCountry(e,'日本')
               }} type="radio" name="tag" value="日本" style={clickCountry6}>日本</a>
@@ -286,15 +410,22 @@ class Country extends React.Component{
       <a onClick={(e) => {
                 this.handleCountry(e,'印度')
               }} type="radio" name="tag" value="其他" style={clickCountry10} >其他</a>
+     </div>
       </li>
   
     );
   }
 }
 class Year extends React.Component{
+  static propTypes = {
+    doctorSchedules: PropTypes.array,
+  }
+
   constructor(props) {
     super(props); 
-        console.log(props);
+        this.state = {isToggleOn: true,
+          touchIndex: 0, // 当前未隐藏div索引值
+        };
         this.handleYear=this.handleYear.bind(this);
   }
   
@@ -308,9 +439,51 @@ class Year extends React.Component{
         console.log("0-0-");
         console.log("0909");
       }
+      componentWillReceiveProps() {
+      }
     
 
+
+      
+      touchStart(event) {
+        startX = event.changedTouches[0].pageX;
+      }
+    
+      // 因为无论move 还是start 都会触发end事件。所以判断方向就在end事件中
+      touchEnd(event, index) {
+        event.preventDefault();
+        const endX = event.changedTouches[0].pageX;
+        if (endX - startX > 20) {
+          // alert('点击左');
+          this.clickLeft(index);
+        } else if (startX - endX > 20) {
+          // alert('点击右');
+          this.clickRight(index);
+        }
+      }
+    
+      clickLeft(indexParam) {
+        const allItemCounts = 1; // 总共轮播个数
+        const index = indexParam || this.state.touchIndex;
+        console.log(index);
+        this.setState({
+          touchIndex: index === 0 ? allItemCounts : index - 1,
+        });
+      }
+    
+      clickRight() {
+        const allItemCounts = 1; // 总共轮播个数
+        const index = this.state.touchIndex;
+        this.setState({
+          touchIndex: index === allItemCounts ? 0 : index + 1,
+        });
+      }
+
+
+
+
   render() {
+    const {touchIndex} = this.state;
     const years = this.props.years;
     console.log(years);
     var clickYear1 = years===''?  Styles.Select : Styles.listStyle;
@@ -325,7 +498,13 @@ class Year extends React.Component{
     return ( 
       
       <li type="checkbox">
-      <span className="" style={Styles.titleName}>年代：</span>
+
+     
+      <span className="" style={Styles.titleName} onClick={() => this.clickLeft()}>年代：</span>
+     
+      <div onTouchStart={this.touchStart.bind(this)}
+            onTouchEnd={(event) => this.touchEnd(event, 0)}
+            style={{display: touchIndex === 0 ? 'block' : 'none'}}>
       <a onClick={
         this.handleYear.bind(this,'','')
       } type="radio" name="tag" value="全部"  style={clickYear1}>全部</a>
@@ -341,6 +520,11 @@ class Year extends React.Component{
       <a onClick={(e) => {
                 this.handleYear(e,'(2014)')
               }} type="radio" name="tag" value="2014" style={clickYear5} >2014</a>
+     </div>
+     
+     <div onTouchStart={this.touchStart.bind(this)}
+            onTouchEnd={(event) => this.touchEnd(event, 1)}
+            style={{display: touchIndex === 1 ? 'block' : 'none'}}>
       <a onClick={(e) => {
                 this.handleYear(e,'(2013)')
               }} type="radio" name="tag" value="2013" style={clickYear6}>2013</a>
@@ -353,6 +537,7 @@ class Year extends React.Component{
       <a onClick={(e) => {
                 this.handleYear(e,'(1980)')
               }} type="radio" name="tag" value="80年代" style={clickYear9} >80年代</a>
+      </div>
       </li>
     );
   }
@@ -658,49 +843,7 @@ class Movie extends React.Component {
         );
       }
      
-      //点赞
-      giveStar(e) {
-        var _this = this;
-        let userToken = UserModel.fetchToken();
-        if (!userToken) {
-          $.toast("您还没有登录");
-          return;
-        }
-        let thisSpan = e.nativeEvent.target;
-        let articleId = thisSpan.getAttribute("data-articleid");
-        let params = {
-          userId: userToken,
-          articleId: articleId
-        };
-        ArticleModel.giveStar(
-          params,
-          data => {
-            if (data.title) {
-              thisSpan.style.color = "red";
-              $.toast(data.content);
-              this.componentDidMount();
-            } else {
-              thisSpan.style.color = "none";
-              $.toast(data.content);
-              this.componentDidMount();
-            }
-          },
-          err => {
-            console.log(err);
-          }
-        );
-      }
-      //设置点赞星样式
-      starStyle(starlist) {
-        let userToken = UserModel.fetchToken();
-        for (let i = 0; i < starlist.length; i++) {
-          let cur = starlist[i];
-          if (cur == userToken) {
-            return { marginRight: "0.5rem", paddingLeft: "0.3rem", color: "red" };
-          }
-        }
-        return { marginRight: "0.5rem", paddingLeft: "0.3rem" };
-      }
+    
       //限制字数
       wordControl(word) {
         if (word.length > 65) {
@@ -906,32 +1049,6 @@ class Movie extends React.Component {
         return reg.test(curEle.className);
       }
 
-      // fetchData() {
-      //   MovieModel.movieList(
-      //     "",
-      //     data => {
-      //       // this.setState({
-      //       //   list: data
-      //       // });
-      //       this.loadingFinish(
-      //         this.refs.outerScroller,
-      //         this.refs.preloader,
-      //         this.refs.scrollList
-      //       );
-      //     },
-      //     err => {
-      //       console.log(err);
-      //     }
-      //   );
-      // }
-      
-  // formType(e,key) { 
-  //   // let style = this.refs.style;
-  //   this.setState({
-  //     style:key
-  //   })
-  //   console.log(key)
-  // }
   goLogin() {
     $.closePanel();
     setTimeout(() => {
@@ -943,15 +1060,20 @@ class Movie extends React.Component {
       return <Me />;
     } else {
       return (
-        <div>
+        <div  style={{marginTop:'5rem'}}>
+          <div style={{marginLeft:'4rem',marginBottom:'1rem'}}>
+          <img src='http://www.qdaily.com/images/missing_face.png' style={{height: '2.5rem'}}/>
+          </div>
           <p>
             <a
               onClick={this.goLogin}
-              className="button button-big button-fill button-success"
+              className="button button-big"
+              style={{marginLeft:'1rem',marginRight:'1rem'}}
             >
-              登录{" "}
+              登录 / 注册{" "}
             </a>
           </p>
+    
         </div>
       );
     }
@@ -1053,18 +1175,14 @@ class Movie extends React.Component {
     const country = this.state.country;
     const years = this.state.years;
     const orderBy = this.state.orderBy;
-    console.log(style);
-    console.log(country);
-    console.log(years);
     var clickOrder1 = this.state.orderBy==='movietime'?  "tab-link active button" : "tab-link button";
     var clickOrder2 = this.state.orderBy==='showtime'?  "tab-link active button" : "tab-link button";
     var clickOrder3 = this.state.orderBy==='score'?  "tab-link active button" : "tab-link button";
-    console.log(orderBy);
     return (
       <div data-log="log">
+        <main className="page page-current">
         <div 
             style={{position: "absolute", height: "50px", width: "100%", top: "0px", zIndex: '2001'}}>{header()}</div>
-        <main className="page page-current">
           <div className="outerScroller" id="outerScroller" ref="outerScroller">
             <div
               className="pullToRefreshBox"

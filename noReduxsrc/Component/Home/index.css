@@ -64,5 +64,20 @@ h2 {
     float:left;
     width:100%;
     position: relative;
+  } */
+  .container {
+    overflow: 'hidden';
+    visibility: 'hidden';
+    position: 'relative'
   }
-   */
+
+  .wrapper {
+    overflow: 'hidden';
+    position: 'relative';
+  }
+
+  .child {
+    float: 'left';
+    width: '100%';
+    position: 'relative';
+  }

@@ -128,7 +128,7 @@ class Me extends React.Component {
           <div className="content-block">
             <p><a onClick={(e) => {
               this.signOut(e)
-            }} className="button button-danger button-fill button-big">退出登录</a></p>
+            }} className="button button-big">退出登录</a></p>
           </div>
         </div>
       </div>

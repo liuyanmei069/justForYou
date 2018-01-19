@@ -79,12 +79,12 @@ let header = () => {
       className="tab-item open-panel pull-left"
       data-panel="#panel-left-demo"
       > */}
-      <a className="button button-link button-nav pull-left back" style={{color:"#FFFFFF"}} href="">
+      <a className="button button-link button-nav pull-left back" style={{color:"#FFFFFF"}} href="javascript:history.go(-1)">
       <span className="icon icon-left" style={{color:"#FFFFFF"}}></span>
       返回
   </a>
     {/* </a> */}
-      <h1 className="title" style={{color:"#FFFFFF"}}>选电影</h1>
+      <h1 className="title" style={{color:"#FFFFFF"}}>电影</h1>
     </header>
     )
   }
@@ -110,9 +110,11 @@ class MovieDetail extends React.Component {
       dcontent: '',
       pageTitle: '发表文章',
       discussion:[],
-      cpublish:0,
-      dpublish:0,
+
       // articleId: null
+      valuec:'',
+      valuet:'',
+      valued:'',
 
     }
   }
@@ -272,7 +274,7 @@ class MovieDetail extends React.Component {
     // return discussList.map(function(item, index) {
       var reactId = 0;
       // console.log(item.discussion._id);
-      console.log(item._id);
+      // console.log(item._id);
       return (
         <li className="" style={Styles.indexList} key={item._id}>
           <Link to={"/movie/" + movieId +'/'+ item._id} style={{ display: "block" }}>
@@ -382,14 +384,81 @@ class MovieDetail extends React.Component {
   //     $.alert(err)
   //   })
   // }
-
-  handleChangeVal(e, key) {
-    let val = e.target.value;
-    if (key == 'title') {
-      this.setState({title: val})
-    } else {
-      this.setState({dcontent: val})
+ checkLogin(e) {
+    let comment = this.refs.commentText.value;
+    console.log(comment)
+    var usertoken = UserModel.fetchToken()
+    if (!usertoken) {
+      $.alert('您还没有登录')
+    }else if(comment == ''){
+      this.setState({valuec: ''});
     }
+    if(comment!==''){
+      this.setState({valuec:comment});
+    }
+    return;
+  }
+  // handleChangeVal(e, key) {
+  //   let val = e.target.value;
+  //   if (key == 'title') {
+  //     this.setState({title: val})
+  //   } else {
+  //     this.setState({dcontent: val})
+  //   }
+  // }
+  // handleChangeVal(e, key) {
+  //   let val = e.target.value;
+  //   if (key == 'title') {
+  //     if(title == '') {
+  //       this.setState({title:val ,valuet: ''});
+  //     }
+  //    else{this.setState
+  //     ({
+  //       title:val,
+  //       valuet:val,
+  //   });}
+  //   } else {
+  //     if (dcontent == '') {
+  //       this.setState({dcontent:val,valued: ''});
+  //     }
+  //    else{this.setState
+  //     ({
+  //       dcontent:val,
+  //       valued:val,
+  //   });}
+  //   }
+  // }
+
+  handleChangeValt() {
+    let title = this.refs.title.value;
+    console.log(title)
+    var usertoken = UserModel.fetchToken()
+    if (!usertoken) {
+      $.alert('您还没有登录')
+    }else
+    if(title == '') {
+      this.setState({title:title ,valuet: ''});
+    }
+   else{this.setState
+    ({
+      valuet:title,
+  });}
+  }
+  handleChangeVald() {
+    let dcontent = this.refs.dcontent.value;
+    console.log(dcontent)
+    var usertoken = UserModel.fetchToken()
+    if (!usertoken) {
+      $.alert('您还没有登录')
+    }else
+   
+  if (dcontent == '') {
+      this.setState({dcontent:dcontent,valued: ''});
+    }
+   else{this.setState
+    ({
+      valued:dcontent,
+  });}
   }
 
   handleCancel() {
@@ -399,18 +468,30 @@ class MovieDetail extends React.Component {
     })
     location.hash = '/movie/'+this.state.movie._id
   }
+dReset(){
+  this.setState({title:'',dcontent:'',valuet:'',valued:''})
+}
 
-
-  checkLogin() {
+  checkLogin(e) {
+    let comment = this.refs.commentText.value;
+    console.log(comment)
     var usertoken = UserModel.fetchToken()
     if (!usertoken) {
       $.alert('您还没有登录')
+    }else if(comment == ''){
+      this.setState({valuec: ''});
+    }
+    if(comment!==''){
+      this.setState({valuec:comment});
     }
     return;
   }
-
+cReset(){
+  this.setState({valuec: ''});
+}
   handleComment() {
     let comment = this.refs.commentText.value;
+    console.log(this.refs.commentText)
     if (comment == '') {
       $.toast('评论不能为空');
       return;
@@ -424,6 +505,7 @@ class MovieDetail extends React.Component {
         comment: comment
       }
         MovieModel.comment(params, (data) => {
+
         console.log(data);
         $.toast(data.content);
         this.refs.commentText.value = '';
@@ -435,6 +517,7 @@ class MovieDetail extends React.Component {
       $.alert('您还没有登录')
     }
   }
+
 
 
   handleDiscussion() {
@@ -460,19 +543,6 @@ class MovieDetail extends React.Component {
         token: this.state.token,
       }
         MovieModel.discussion(params, (data) => {
-  //       console.log(data);
-  //       $.toast(data.content);
-  //       this.refs.discussText.value = '';
-  //       this.componentDidMount();
-  //     }, (err) => {
-  //       console.log(err)
-  //     })
-  //   } else {
-  //     $.alert('您还没有登录')
-  //   }
-  // }
-  // this.setState({dpublish:1});
-  // console.log(dpublish)
   $.toast(data.content);
 
   location.hash = '/movie/'+this.state.movie._id
@@ -490,15 +560,6 @@ class MovieDetail extends React.Component {
 
   //限制字数
   wordControl(word) {
-    // let word = typeof word;
-  // var t = typeof word;
-  // var str = JSON.stringify(word);
-  // var arr = eval(word);
-  // for(var i=0;i<arr.length;i++){
-  //   for(var j=0;j<arr[i].length;j++){
-    //   console.log(arr[i].text+""+arr[i].value)
-    //  }
-  // }
   var t = typeof word;
   // var t = typeof str;
   if(t === "object"){
@@ -518,34 +579,7 @@ class MovieDetail extends React.Component {
           }
          
   }
-  
- 
-
-  //  console.log(str);
-  //  console.log(word);
-  //  console.log(t);
-  //  console.log(m);
-  //  var str = word.join("");
-  // var m = str.join('');
-  // console.log(m)
-  // var l = str.length;
-  // console.log(l);
-  // console.log(str.length)
-
-  // if(str == "[]"){
-  //   let word="暂无简介"
-  //   return word;
-  // }else if(t == 'string'){
-  //     if (str.length > 200) {
-  //       word = str.substring(5, 200);
-  //       return word;
-  //     }else{
-  //       return str;
-  //     }
-  
-  //   }
-    
-    
+   
   }
   mainActor(actor) {
   var t = typeof actor;
@@ -578,51 +612,42 @@ class MovieDetail extends React.Component {
               return word;
             }
           }
-
-  // var str = JSON.stringify(word);
-  // var t = typeof str;
-  //  console.log(word);
-  //  console.log(t);
-  // if(str == "[]"){
-  //   let word="暂无简介"
-  //   return word;
-  // }else if(t == 'string'){
-  //     if (str.length > 200) {
-  //       word = str.substring(200, str.length);
-  //       return word;
-  //     }else{
-  //       return str;
-  //     }
-  //   }
   }
   showData(e) {
     if(e)  {
         this.setState({
           show:true,
         });
-      //   this.loadingFinish(
-      //     this.refs.outerScroller,
-      //     this.refs.preloader,
-      //     this.refs.scrollList
-      //   );
-      // },
-      // err => {
-      //   console.log(err);
       }
   }
  
 
   render() {
     const show = this.state.show;
-    const dpublish = this.state.dpublish;
+   console.log(this.refs.title)
+   let valuec = this.state.valuec;
+   let valuet = this.state.valuet;
+   let valued = this.state.valued;
+   console.log(valuec)
+   console.log(valuet)
+   console.log(valued)
+  //  const value = this.refs.commentText
+  //  console.log(value)
+  var compublish = valuec!==''?  "button button-fill button-warning close-popup" : "button button-fill button-warning ";
+  var dispublish = valuet!==''?  (valued!==''?"button button-fill button-warning close-popup":"button button-fill button-warning ") : "button button-fill button-warning ";
+    // var compublish = this.refs.commentText.value !== ''?  "button button-fill button-warning close-popup" : "button button-fill button-warning";
     var ifClick = show===true?  Styles.clickStyle : Styles.unclickStyle;
     var ifShow = show===true?  Styles.showRest : Styles.unshowRest;
-    var dispublish = dpublish===1?  "button button-fill button-warning close-popup" : "button button-fill button-warning ";
+    // var dispublish = dpublish===1?  "button button-fill button-warning close-popup" : "button button-fill button-warning";
+    // var compublish = cpublish===1?  "button button-fill button-warning close-popup" : "button button-fill button-warning";
     console.log(show)
+    console.log(dispublish)
+    console.log(compublish)
     var mm = this.state.movie.actor;
     return (
       <div className="page-group">
-      <div data-log="log" id="page-fixed-tab">
+      {/* <div data-log="log" id="page-fixed-tab"> */}
+      <div className="pagr page-current" id="page-fixed-tab">
           
           <div className="popup popup-about">
   <div className="content-block">
@@ -631,10 +656,10 @@ class MovieDetail extends React.Component {
   <div style={{float:"right"}}>
   <a onClick={() => {
             this.handleComment()
-          }} className="button button-fill button-warning close-popup">发表</a></div>
+          }} className={compublish}>发表</a></div>
           <div style={{clear:"both"}}>
           <input type="text" style={{border: 'none'}} ref="commentText" className="col-75 commentInput"
-                 placeholder="说点什么吧" onChange={this.checkLogin}/> </div>
+          placeholder="说点什么吧" onChange={()=>{this.checkLogin()}}/> </div>
 
 </div>
 </div>
@@ -646,7 +671,7 @@ class MovieDetail extends React.Component {
   <div style={{float:"right"}}>
   <a onClick={() => {
             this.handleDiscussion()
-          }} className="button button-fill button-warning close-popup">发表</a></div>
+          }} className={dispublish}>发表</a></div>
           <div style={{clear:"both"}}>
           {/* <input type="text" style={{border: 'none'}} ref="discussText" className="col-75 commentInput"
                  placeholder="说点什么吧" onChange={this.checkLogin}/> </div> */}
@@ -655,8 +680,8 @@ class MovieDetail extends React.Component {
                 <div className="item-content">
                   <div className="item-inner" style={{borderBottom: "2px solid #eee"}}>
                     <div className="item-input">
-                      <input type="text" ref="title" placeholder="请输入标题" value={this.state.title} onChange={
-                        this.handleChangeVal
+                      <input type="text" ref="title" placeholder="请输入标题"  onChange={
+                       () =>{ this.handleChangeValt()}
                       }/>
                     </div>
                   </div>
@@ -667,8 +692,8 @@ class MovieDetail extends React.Component {
                   <div className="item-inner">
                     <div className="item-input">
                       <textarea placeholder="请输入内容" ref="dcontent" style={{height: "13rem"}} onChange={
-                        this.handleChangeVal
-                      } value={this.state.dcontent}/>
+                        () =>{ this.handleChangeVald()}
+                      } />
                     </div>
                   </div>
                 </div>
@@ -721,6 +746,8 @@ class MovieDetail extends React.Component {
       </div> */}
     </div>
     </div>
+
+
     
       <div 
       style={{position: "absolute", height: "50px", width: "100%", top: "0px", zIndex: '2001'}}>{header()}</div>
@@ -793,11 +820,14 @@ class MovieDetail extends React.Component {
           <span style={ifShow}>{this.restControl(this.state.movie.description)}</span>
           </div>
           
-            <div className="buttons-tab fixed-tab" style={{top:"50px"}} offSet="44">
+            <div className="buttons-tab fixed-tab" style={{top:"50px"}}>
       <a href="#tab1" className="tab-link active button">评论</a>
       <a href="#tab2" className="tab-link button">讨论区</a>
     </div>
     
+
+
+ 
     
     
           <div className="tabs" style={{paddingTop:"1rem"}}>
@@ -808,7 +838,7 @@ class MovieDetail extends React.Component {
           <h3  className="clearPL">评论:</h3>
           </div>
           <div style={{float:"right"}}>
-          <Link to={"/movie/"+this.state.movie._id} className="button open-popup" data-popup=".popup-about" style={{weight:"2rem"}}>写短评</Link></div>
+          <Link to={"/movie/"+this.state.movie._id} className="button open-popup" data-popup=".popup-about" style={{weight:"2rem"}} onClick={()=>{this.cReset()}}>写短评</Link></div>
             <div style={{clear:"both",paddingTop:"1rem"}}>
             {this.commentList()}
             </div>
@@ -818,7 +848,7 @@ class MovieDetail extends React.Component {
           <h3  className="clearPL">讨论:</h3>
           </div>
           <div style={{float:"right"}}>
-          <Link to={"/movie/"+this.state.movie._id} className="button open-popup" data-popup=".popup-discussion" style={{weight:"2rem"}}>发讨论</Link></div>
+          <Link to={"/movie/"+this.state.movie._id} className="button open-popup" data-popup=".popup-discussion" style={{weight:"2rem"}} onClick={()=>{this.dReset()}}>发讨论</Link></div>
                <div style={{clear:"both",paddingTop:"1rem"}}>
             {this.discussList()}</div>
               </div></div>
@@ -982,7 +1012,7 @@ class MovieDetail extends React.Component {
     )
   }
 }
-$(document).on("pageInit", function() {
-  $('.buttons-tab').fixedTab({offSet:44});
-});
+// $(document).on("pageInit", function() {
+//   $('.buttons-tab').fixedTab({offSet:44});
+// });
 export default MovieDetail;

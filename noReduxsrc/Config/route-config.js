@@ -28,19 +28,19 @@ function create() {
 let nav = () => {
   return (
     <nav className="bar bar-tab">
-      <NavLink className="tab-item" activeClassName="active" to="/home">
-        <span className="icon icon-home active"></span>
+      <NavLink className="tab-item " activeClassName="active" to="/home">
+        <span className="icon icon-home "></span>
         <span className="tab-label">主页</span>
       </NavLink>
-      <i className="tab-item" onClick={create}>
+      {/* <i className="tab-item" onClick={create}>
         <span className="icon icon-edit"></span>
         <span className="tab-label">发表</span>
-      </i>
+      </i> */}
       <NavLink className="tab-item" activeClassName="active" to="/movie">
         <span className="icon icon-computer"></span>
         <span className="tab-label">电影</span>
       </NavLink>
-      <NavLink className="tab-item" activeClassName="active" to="/indexList">
+      <NavLink className="tab-item" activeClassName="active" to="/hotComment">
         <span className="icon icon-message"></span>
         <span className="tab-label">热评</span>
       </NavLink>
@@ -72,6 +72,13 @@ class RouteConfig extends React.Component {
     return (
       <AsyncLoadModule moduleId="route.home" load={() => import('../Component/Home')}>
         {(Comp) => <Comp {...props} title="Page Title: home"/>}
+      </AsyncLoadModule>
+    )
+  }
+  WrapHotComment(props) {
+    return (
+      <AsyncLoadModule moduleId="route.hotComment" load={() => import('../Component/hotComment')}>
+        {(Comp) => <Comp {...props} title="Page Title: hotComment"/>}
       </AsyncLoadModule>
     )
   }
@@ -163,6 +170,7 @@ class RouteConfig extends React.Component {
               <Switch>
                 <Route exact path="/" component={this.WrapHome}/>
                 <Route exact name="home" path="/home" component={this.WrapHome}/>
+                <Route exact name="hotComment" path="/hotComment" component={this.WrapHotComment}/>
                 <Route exact name="indexlist" path="/indexlist" component={this.WrapIndexList}/>
                 <Route exact name="movie" path="/movie" component={this.Wrapmovie}/>
                 <Route exact name="articleDetail" path="/indexList/:id" component={this.WrapArticleDetail}/>

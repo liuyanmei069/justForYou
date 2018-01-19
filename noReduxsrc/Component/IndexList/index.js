@@ -435,15 +435,20 @@ class IndexList extends React.Component {
       return <Me />;
     } else {
       return (
-        <div>
+        <div  style={{marginTop:'5rem'}}>
+          <div style={{marginLeft:'4rem',marginBottom:'1rem'}}>
+          <img src='http://www.qdaily.com/images/missing_face.png' style={{height: '2.5rem'}}/>
+          </div>
           <p>
             <a
               onClick={this.goLogin}
-              className="button button-big button-fill button-success"
+              className="button button-big"
+              style={{marginLeft:'1rem',marginRight:'1rem'}}
             >
-              登录{" "}
+              登录 / 注册{" "}
             </a>
           </p>
+    
         </div>
       );
     }

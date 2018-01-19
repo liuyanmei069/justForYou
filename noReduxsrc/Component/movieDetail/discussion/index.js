@@ -7,7 +7,22 @@ import Popup from 'react-popup';
 import Me from "../../Me";
 
 
-
+let header = () => {
+  return (
+    <header className="bar bar-nav" style={{backgroundColor:"#0099FF",color:"#FFFFFF"}}>
+      {/* <a
+      className="tab-item open-panel pull-left"
+      data-panel="#panel-left-demo"
+      > */}
+      <a className="button button-link button-nav pull-left back" style={{color:"#FFFFFF"}} href="javascript:history.go(-1)">
+      <span className="icon icon-left" style={{color:"#FFFFFF"}}></span>
+      返回
+  </a>
+    {/* </a> */}
+      <h1 className="title" style={{color:"#FFFFFF"}}>讨论</h1>
+    </header>
+    )
+  }
 
 class Discussion extends React.Component {
   constructor(props) {
@@ -118,13 +133,31 @@ class Discussion extends React.Component {
     console.log(this.state.discussMovie.title)
     return (
       <div>
+         <div 
+      style={{position: "absolute", height: "50px", width: "100%", top: "0px", zIndex: '2001'}}>{header()}</div>
 
-        <main className="detailContent">
-          <h2 className="clearPt">{this.state.discussMovie.title}</h2>
-          <div>
-            <span className="font12 marR">作者:{this.state.author.username}</span>
-            <span className="font12">发表于:{dateDiff(this.state.discussMovie.createAt)}</span>
+        <main className="detailContent" style={{marginTop:"2rem"}}>
+          <div style ={{height:"2rem",fontSize:"0.6rem",background:"#DDDDDD"}}>{this.state.discussMovie.mtitle}<span style={{marginLeft:"2rem",fontSize:"0.4rem",color:"#AAAAAA"}}>共{this.state.discussMovie.discussNum}个讨论></span></div>
+          <hr/>
+        <h2 className="clearPt">{this.state.discussMovie.title}</h2>
+        <div style={{display: "inline-block" }}>
+        <img
+                    src={this.state.author.avatar}
+                    style={{
+                      marginRight: "0.3rem",
+                     height: "1.7rem",
+                     verticalAlign: "top",
+                    
+                   }}
+                   alt=""
+                  />
+                  </div>
+        
+          <div  style={{display: "inline-block" ,verticalAlign: "bottom",}}>
+            <div className="font12 marR"  style={{display: "inline-block" }}>{this.state.author.username}</div><button style={{verticalAlign: "bottom",height:"1rem",width:"1.8rem",display: "inline-block",marginBottom:"0.2rem",fontSize:"0.00001rem",textAlign:"center",background:"transparent",border: "1px solid #00BBFF",borderRadius:"5px"}}><span style={{color:"#00BBFF"}}>楼主</span></button>
+            <div className="font12">发表于:{dateDiff(this.state.discussMovie.createAt)}</div>
           </div>
+         
           <hr/>
           <div className="article">
             {this.state.discussMovie.dcontent}

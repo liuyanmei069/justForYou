@@ -169,31 +169,12 @@ let MovieModel = {
   fetchDiscuss: (_id1,_id2, _success, _error) => {
     _request('GET', `${API}movie/fetchDiscuss/${_id1}/${_id2}`, null, _success, _error)
   },
+  hotDiscuss: (_params, _success, _error) => {
+    _request('GET', `${API}movie/hotDiscuss`,_params, _success, _error)
+  },
   dcomment: (_params, _success, _error) => {
     _request('POST', `${API}movie/dcomment`, _params, _success, _error)
   },
-  
-
-  // love
-  // : (_params, _success, _error) => {
-  //   _request('GET', `${API}movie/love`, _params, _success, _error)
-  // },
-  // comedy
-  // : (_params, _success, _error) => {
-  //   _request('GET', `${API}movie/comedy`, _params, _success, _error)
-  // },
-  // action
-  // : (_params, _success, _error) => {
-  //   _request('GET', `${API}movie/action`, _params, _success, _error)
-  // },
-  // story
-  // : (_params, _success, _error) => {
-  //   _request('GET', `${API}movie/story`, _params, _success, _error)
-  // },
-  // science
-  // : (_params, _success, _error) => {
-  //   _request('GET', `${API}movie/science`, _params, _success, _error)
-  // },
 }
 
 export {UserModel, ArticleModel,MovieModel}

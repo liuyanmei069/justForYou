@@ -1,10 +1,10 @@
 // import React from "react";
 import { Link } from "react-router-dom";
-import { UserModel, ArticleModel,MovieModel } from "../../dataModel";
+import { UserModel, ArticleModel, MovieModel } from "../../dataModel";
 import "../../../static/css/style.css";
 import Me from "../../Me";
 // import SearchBar from "../";
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 import { dateDiff } from "../../../Tools";
 let Styles = {
@@ -15,11 +15,9 @@ let Styles = {
     borderBottom: "1px solid #dfdfdf",
     background: "#fff",
     paddingLeft: "0.75rem",
-    paddingBottom: "0.3rem",
+    paddingBottom: "0.3rem"
     // display: "inline",
     // verticalAlign:"top",
-    
-    
   },
   h4Style: {
     margin: "0.3rem 0",
@@ -38,91 +36,56 @@ let Styles = {
   }
 };
 class SearchBar extends React.Component {
-    constructor(props) {
-      super(props);
-      this.handleFilterTextInputChange = this.handleFilterTextInputChange.bind(this);
-    }
-    
-    handleFilterTextInputChange(e) {
-      //this.props.onFilterTextInput(e.target.value);
-      this.props.onFilterTextInput(e.target.value);
-      console.log(e.target.value);
-    } 
-    render() {
-      const info = this.props.info;
-      console.log(info)
-      return (
-        // <form style={{marginTop:'50px'}}>
-        //   <input
-        //     type="text"
-        //     placeholder="Search..."
-        //     value={this.props.filterText}
-        //     onChange={this.handleFilterTextInputChange}
-        //   />
-        // </form>
-      
-        <div>
-<div className="searchbar row">
-    <div className="search-input col-80">
-      {/* <div className="bar bar-header-secondary" >
-        <div className="searchbar"> */}
+  constructor(props) {
+    super(props);
+    this.handleFilterTextInputChange = this.handleFilterTextInputChange.bind(this);
+  }
 
-          {/* <div className="search-input"> */}
-            {/* <label  className="icon icon-search" htmlFor="search"></label> */}
-            <label  className="icon icon-search" htmlFor="search"></label>
-            <input  ref="info"  onChange={(e)=>{this.handleFilterTextInputChange(e)}}  type="search" id='search' placeholder='输入关键字...'/>
-            
+  handleFilterTextInputChange(e) {
+    //console.log("handleFilterTextInputChange");
+    this.props.onFilterTextInput(e.target.value);
+    //this.props.onFilterTextInput(e.target.value);
+    console.log(e.target.value);
+  }
+  render() {
+    const info = this.props.info;
+    console.log(info);
+    return (
+      <div>
+        <div className="searchbar row">
+          <div className="search-input col-80">
+            <label className="icon icon-search" htmlFor="search" />
+            <input
+              ref="info"
+              onChange={this.handleFilterTextInputChange}
+              type="search"
+              id="search"
+              placeholder="输入关键字..."
+            />
           </div>
-{/*       
-        </div>
-        
-        </div> */}
-        {/* <a className="button button-fill button-primary col-20">搜索</a> */}
-        {/* <button onClick={(e)=>{this.handleFilterTextInputChange(e)}} className="col-20">搜索</button> */}
-        <Link to={'/home'} className="col-20">取消</Link>
+          <Link to={"/home"} className="col-20">
+            取消
+          </Link>
         </div>
       </div>
-    //   </div>
-      );
-    }
+    );
   }
-// class SearchBar extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.handleFilterTextInputChange = this.handleFilterTextInputChange.bind(this);
-//   }
-  
-//   handleFilterTextInputChange(e) {
-//     //this.props.onFilterTextInput(e.target.value);
-//     console.log(e.target.value);
-//   } 
-//   render() {
-//     return (
-//       <form>
-//         <input
-//           type="text"
-//           placeholder="Search..."
-//           value={this.props.filterText}
-//           onChange={this.handleFilterTextInputChange}
-//         />
-//       </form>
-//     );
-//   }
-// }
+}
+
 class searchMovie extends React.Component {
   constructor(props) {
     super(props);
     this.searchData = this.searchData.bind(this);
     this.state = {
       list: [],
-      info:'',
-      defaultTop: null,
+      info: "",
+      defaultTop: null
     };
   }
   componentDidMount() {
     console.log("0-0-");
-      this.searchData();
-      this.reseat();
+    this.searchData();
+    this.reseat();
     console.log("0909");
   }
   reseat() {
@@ -144,13 +107,15 @@ class searchMovie extends React.Component {
     let info = e;
     console.log(info);
     let movieInfo = {
-        info: info,
-      }
-      console.log(movieInfo)
-    MovieModel.searchMovie(movieInfo, (data) => {
+      info: info
+    };
+    console.log(movieInfo);
+    MovieModel.searchMovie(
+      movieInfo,
+      data => {
         this.setState({
           list: data,
-          info:info,
+          info: info
         });
         this.loadingFinish(
           this.refs.outerScroller,
@@ -163,50 +128,7 @@ class searchMovie extends React.Component {
       }
     );
   }
- 
-  //点赞
-  giveStar(e) {
-    var _this = this;
-    let userToken = UserModel.fetchToken();
-    if (!userToken) {
-      $.toast("您还没有登录");
-      return;
-    }
-    let thisSpan = e.nativeEvent.target;
-    let articleId = thisSpan.getAttribute("data-articleid");
-    let params = {
-      userId: userToken,
-      articleId: articleId
-    };
-    ArticleModel.giveStar(
-      params,
-      data => {
-        if (data.title) {
-          thisSpan.style.color = "red";
-          $.toast(data.content);
-          this.componentDidMount();
-        } else {
-          thisSpan.style.color = "none";
-          $.toast(data.content);
-          this.componentDidMount();
-        }
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //设置点赞星样式
-  starStyle(starlist) {
-    let userToken = UserModel.fetchToken();
-    for (let i = 0; i < starlist.length; i++) {
-      let cur = starlist[i];
-      if (cur == userToken) {
-        return { marginRight: "0.5rem", paddingLeft: "0.3rem", color: "red" };
-      }
-    }
-    return { marginRight: "0.5rem", paddingLeft: "0.3rem" };
-  }
+
   //限制字数
   wordControl(word) {
     if (word.length > 65) {
@@ -259,9 +181,9 @@ class searchMovie extends React.Component {
     //检查手指滑动的方向
     function checkDirection(e) {
       /**如果显示内容不是scrollList最顶端,则不满足下拉刷新条件
-         * 这个也是检查是否满足下拉的条件,但是不能和上面的写在一起,因为我们已经开始监听touchmove事件了,
-         * 因为不满足,所以把touchmove事件的监听remove掉
-         */
+       * 这个也是检查是否满足下拉的条件,但是不能和上面的写在一起,因为我们已经开始监听touchmove事件了,
+       * 因为不满足,所以把touchmove事件的监听remove掉
+       */
       if (scrollList.scrollTop > 0) {
         outerScroller.removeEventListener("touchmove", checkDirection, false);
         return;
@@ -411,146 +333,120 @@ class searchMovie extends React.Component {
     var reg = new RegExp("(\\b)" + strClass + "(\\b)");
     return reg.test(curEle.className);
   }
-    //列表
-searchResult() {
+  //列表
+  searchResult() {
     let _this = this;
     let list = this.state.list;
-    console.log(list)
+    console.log(list);
     return list.map(function(item, index) {
-        return (
-          <div className="" style={Styles.indexList} key={item._id} >
-            <Link to={"/Movie/" + item._id} style={{ width:"8rem",height: "15rem" }}>
-              <div className="list" >
-                <div className="" style={{ paddingTop: "0.4rem" }}>
+      
+      return (
+        <div className="" style={Styles.indexList} key={item._id}>
+          <Link
+            to={"/Movie/" + item._id}
+            style={{ width: "8rem", height: "15rem" }}
+          >
+            <div className="list">
+              <div className="" style={{ paddingTop: "0.4rem" }}>
+                <div
+                  style={{
+                    height: "6rem"
+                  }}
+                >
                   <div
-                    style={{        
-                      height: "6rem",
+                    style={{
+                      width: "25%",
+                      height: "100%",
+                      float: "left"
                     }}
                   >
-                  <div style={{
-            width:"25%",
-            height: "100%",
-            float:"left",
-          }}>
                     <img
                       src={item.imglink}
                       style={{
-                        width:"3rem",
+                        width: "3rem",
                         height: "5rem"
                       }}
                       alt=""
                     />
-                    </div>
-                    <div style={{
-            width:"75%",
-            height: "100%",
-            float:"left",
-          }}>
-                    <span
+                  </div>
+                  <div
                     style={{
-                      height: "0.5rem",
-                      fontSize: "16px",
-                      fontWeight: "900"
+                      width: "75%",
+                      height: "100%",
+                      float: "left"
                     }}
-                  >{item.title}
-
-                  </span><br/>
-                    <span style={{ 
+                  >
+                    <span
+                      style={{
+                        height: "0.5rem",
+                        fontSize: "16px",
+                        fontWeight: "900"
+                      }}
+                    >
+                      {item.title}
+                    </span>
+                    <br />
+                    <span
+                      style={{
                         height: "0.4rem",
-                        fontSize: "14px",
-                        }}
-                        >
-                        {item.score}分/{item.showtime}/{item.country}
-                      </span> 
-                    
-                     </div>
+                        fontSize: "14px"
+                      }}
+                    >
+                      {item.score}分/{item.showtime}/{item.country}
+                    </span>
                   </div>
                 </div>
               </div>
-            </Link>
-          </div>
-        );
-      });
-    }
-  goLogin() {
-    $.closePanel();
-    setTimeout(() => {
-      window.location.hash = "login";
-    }, 1000);
-  }
-  checkLogin() {
-    if (UserModel.fetchToken()) {
-      return <Me />;
-    } else {
-      return (
-        <div>
-          <p>
-            <a
-              onClick={this.goLogin}
-              className="button button-big button-fill button-success"
-            >
-              登录{" "}
-            </a>
-          </p>
+            </div>
+          </Link>
         </div>
       );
-    }
+    });
   }
+ 
   render() {
     const info = this.state.info;
-    console.log(info)
+    console.log('search',info);
     return (
-      <div data-log="log">
-        <main className="page page-current">
-          <div className="outerScroller" id="outerScroller" ref="outerScroller">
-            <div
-              className="pullToRefreshBox"
-              id="pullToRefreshBox"
-              ref="pullToRefreshBox"
-            >
-              <div className="preloader" id="" ref="preloader" />
-              <div
-                className="pullToRefreshArrow"
-                id=""
-                ref="pullToRefreshArrow"
-              />
-            </div>
-            <a
-              className="tab-item open-panel pull-left"
-              data-panel="#panel-left-demo"
-            >
-              {/* <span className="icon icon-me" /> */}
-            </a>
-            {/* <SearchBar 
-            filterText={this.state.filterText}
-            /> */}
-            <SearchBar 
-            onFilterTextInput={this.searchData.bind(this)} info={info}
-            />
-            {/* <Style onTypeClick={this.formType.bind(this)} style={style} /> */}
-            <ul
-              style={{ background: "#eee" }}
-              className="scroll"
-              ref="scrollList"
-            >
-            {this.searchResult()}
-            </ul>
-            <div className="content">
-</div>
-          </div>
-        </main>
-        <div className="panel-overlay" />
+    <div data-log="log">
+    <main className="page page-current">
+      <div className="outerScroller" id="outerScroller" ref="outerScroller">
         <div
-          className="panel panel-left panel-reveal theme-dark"
-          id="panel-left-demo"
+          className="pullToRefreshBox"
+          id="pullToRefreshBox"
+          ref="pullToRefreshBox"
         >
-          {this.checkLogin()}
-          {/*<Me />*/}
+          <div className="preloader" id="" ref="preloader" />
+          <div
+            className="pullToRefreshArrow"
+            id=""
+            ref="pullToRefreshArrow"
+          />
         </div>
- 
+        <a
+          className="tab-item open-panel pull-left"
+          data-panel="#panel-left-demo"
+        >
+        </a>
+        <SearchBar 
+        onFilterTextInput={this.searchData.bind(this)} info={info}
+        />
+        <ul
+          style={{ background: "#eee" }}
+          className="scroll"
+          ref="scrollList"
+        >
+          {this.searchResult()}
+        </ul>
       </div>
+    </main>
+    <div className="panel-overlay" />
+    <div
+      className="panel panel-left panel-reveal theme-dark"
+      id="panel-left-demo">
+    </div>
+  </div>
     );
   }
-
 }
 export default searchMovie;

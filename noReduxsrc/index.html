@@ -10,6 +10,7 @@
     <meta name="full-screen" content="yes">
     <meta name="x5-fullscreen" content="true">
     <script src="/docs-demos/js/fixed-tab.js"></script>
+    <!-- <script src="/docs-demos/movieDetail.js/fixed-tab.js"></script> -->
     <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.css">
     <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/css/swiper.min.css">
@@ -42,7 +43,8 @@ $.config = {
 };
 
 </script> -->
-<script>$(document).on("pageinte",function(){
+<script>$(document).on("pageInit", function() {
+  $('.buttons-tab').fixedTab({offSet:60});
 });
   </script>
 
@@ -68,7 +70,7 @@ var mySwiper = new Swiper ('.swiper-container', {
   // 如果需要滚动条
   // scrollbar: '.swiper-scrollbar',
   // dataSpaceBetween: '10',
-  slidesPerView : 3,
+  slidesPerView : 5,
   spaceBetween : 5,
 }) 
 } 
